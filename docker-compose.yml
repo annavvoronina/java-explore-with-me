@@ -1,5 +1,14 @@
 version: '3.8'
 services:
+  db:
+    image: postgres:13.7-alpine
+    ports:
+      - "6541:5432"
+    environment:
+      - POSTGRES_DB=ewm-stats
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+
   server:
     build: stat-service/server
     ports:
@@ -19,12 +28,3 @@ services:
       - server
     environment:
       - SERVER_URL=http://server:9090
-
-  db:
-    image: postgres:13.7-alpine
-    ports:
-      - "6541:5432"
-    environment:
-      - POSTGRES_DB=ewm-stats
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=root

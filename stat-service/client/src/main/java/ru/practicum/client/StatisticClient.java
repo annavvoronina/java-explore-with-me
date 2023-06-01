@@ -30,10 +30,12 @@ public class StatisticClient extends BaseClient {
     }
 
     public ResponseEntity<Object> getStat(String start, String end, String[] uris, boolean unique) {
+        String[] urisInternal = uris != null ? uris : new String[0];
+
         Map<String, Object> parameters = Map.of(
                 "start", start,
                 "end", end,
-                "uris", uris,
+                "uris", urisInternal,
                 "unique", unique
         );
         return get("/stats?start={start}&end={end}&uris={uris}&unique={unique}", parameters);
