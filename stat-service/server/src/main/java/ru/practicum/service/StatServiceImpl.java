@@ -33,7 +33,7 @@ public class StatServiceImpl implements StatService {
     @Override
     public List<StatisticResponseDto> getStat(LocalDateTime start, LocalDateTime end, String[] uris, boolean unique) {
         List<StatResult> result;
-        if (uris == null) {
+        if (uris == null || uris.length == 0) {
             if (unique) {
                 result = statRepository.findDistinctAndTimeStampBetween(start, end);
             } else {
