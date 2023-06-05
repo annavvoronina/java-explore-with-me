@@ -16,7 +16,7 @@ public class StatisticClient extends BaseClient {
     private static final String API_PREFIX = "";
 
     @Autowired
-    public StatisticClient(@Value("${server.url}") String serverUrl, RestTemplateBuilder builder) {
+    public StatisticClient(@Value("${statistic-server.url}") String serverUrl, RestTemplateBuilder builder) {
         super(
                 builder
                         .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + API_PREFIX))

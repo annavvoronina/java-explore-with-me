@@ -17,9 +17,9 @@ public class StatMapper {
     public static Stat toStat(StatisticRequestDto statDto) {
         return new Stat(
                 statDto.getId(),
-                statDto.getApp() != null ? statDto.getApp() : null,
-                statDto.getUri() != null ? statDto.getUri() : null,
-                statDto.getIp() != null ? statDto.getIp() : null,
+                statDto.getApp(),
+                statDto.getUri(),
+                statDto.getIp(),
                 LocalDateTime.now());
     }
 }
