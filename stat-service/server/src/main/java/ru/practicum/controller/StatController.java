@@ -2,6 +2,7 @@ package ru.practicum.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.StatisticRequestDto;
@@ -18,6 +19,7 @@ import java.util.List;
 public class StatController {
     private final StatService statService;
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/hit")
     public StatisticResponseDto createStat(@RequestBody StatisticRequestDto statRequestDto) {
         return statService.createQuery(statRequestDto);
@@ -26,7 +28,7 @@ public class StatController {
     @GetMapping("/stats")
     public List<StatisticResponseDto> getStat(@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
                                               @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
-                                              @RequestParam(name = "uris") String[] uris,
+                                              @RequestParam(name = "uris") List<String> uris,
                                               @RequestParam(name = "unique", defaultValue = "false") boolean unique) {
         return statService.getStat(start, end, uris, unique);
     }
