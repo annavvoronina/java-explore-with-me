@@ -60,7 +60,7 @@ public class EventMapper {
         return new EventFullDto(event.getId(),
                 event.getAnnotation(),
                 CategoryMapper.toCategoryDto(event.getCategory()),
-                event.getConfirmedRequests() != null ? event.getConfirmedRequests() : 0,
+                event.getConfirmedRequests() != null ? event.getConfirmedRequests() : 1,
                 event.getCreatedOn().format(DATE_TIME_FORMATTER),
                 event.getDescription(),
                 event.getEventDate() != null ? event.getEventDate().format(DATE_TIME_FORMATTER) : null,
