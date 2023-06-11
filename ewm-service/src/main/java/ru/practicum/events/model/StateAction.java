@@ -1,7 +1,5 @@
 package ru.practicum.events.model;
 
-import ru.practicum.exception.IllegalStateException;
-
 public enum StateAction {
     PUBLISH_EVENT, REJECT_EVENT, SEND_TO_REVIEW, CANCEL_REVIEW;
 
@@ -10,8 +8,9 @@ public enum StateAction {
         try {
             state = StateAction.valueOf(stringState);
         } catch (Exception e) {
-            throw new IllegalStateException("Unknown StateAction: " + stringState);
+            state = PUBLISH_EVENT;
         }
+
         return state;
     }
 
@@ -28,9 +27,8 @@ public enum StateAction {
                     break;
             }
 
-        } catch (Exception e) {
-            throw new IllegalStateException("Unknown StateAction: " + stringState);
-        }
+        } catch (Exception ignored) {}
+
         return state;
     }
 }

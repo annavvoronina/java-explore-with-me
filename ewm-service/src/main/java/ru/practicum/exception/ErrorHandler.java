@@ -23,7 +23,7 @@ import static org.springframework.http.HttpStatus.CONFLICT;
 public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(BAD_REQUEST)
-    public ErrorResponse notCorrectState(final java.lang.IllegalStateException e) {
+    public ErrorResponse notCorrectState(final IllegalStateException e) {
         return new ErrorResponse(e.getMessage());
     }
 

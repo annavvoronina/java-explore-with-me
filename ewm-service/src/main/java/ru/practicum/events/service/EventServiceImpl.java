@@ -68,6 +68,8 @@ public class EventServiceImpl implements EventService {
         }
         var category = categoryRepository.findById(newEventDto.getCategory());
         category.ifPresent(event::setCategory);
+        long defaultConfirmedRequests = 0;
+        event.setConfirmedRequests(defaultConfirmedRequests);
         Event createdEvent = eventRepository.save(event);
         return EventMapper.toEventFullDto(createdEvent);
     }
@@ -147,7 +149,7 @@ public class EventServiceImpl implements EventService {
         if (initiator.isEmpty()) {
             throw new ObjectNotFoundException("Пользователь не найден " + userId);
         }
-        var event = eventRepository.findByInitiatorAndId(initiator.get(), eventId);
+        var event = eventRepository.findById(eventId);
         if (event.isEmpty()) {
             throw new ObjectNotFoundException("Событие не найдено" + eventId);
         }

@@ -106,7 +106,7 @@ public class RequestServiceImpl implements RequestService {
         if (requester.isEmpty()) {
             throw new ObjectNotFoundException("Пользователь не найден " + userId);
         }
-        var eventOptional = eventRepository.findByInitiatorAndId(requester.get(), eventId);
+        var eventOptional = eventRepository.findById(eventId);
         if (eventOptional.isEmpty()) {
             throw new ObjectNotFoundException("Событие не найдено " + eventId);
         }
