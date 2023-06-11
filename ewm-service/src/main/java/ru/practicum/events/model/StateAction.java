@@ -27,7 +27,9 @@ public enum StateAction {
                     break;
             }
 
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+
+        }
 
         return state;
     }
