@@ -4,6 +4,7 @@ import com.querydsl.core.BooleanBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.StatisticRequestDto;
@@ -16,7 +17,8 @@ import ru.practicum.events.model.QEvent;
 import ru.practicum.events.model.State;
 import ru.practicum.events.model.StateAction;
 import ru.practicum.events.repository.EventRepository;
-import ru.practicum.exception.ForbiddenException;
+import ru.practicum.exception.BadRequestException;
+import ru.practicum.exception.ConflictException;
 import ru.practicum.exception.ObjectNotFoundException;
 import ru.practicum.request.dto.EventRequestFullDto;
 import ru.practicum.request.mapper.RequestMapper;
@@ -27,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,7 +47,17 @@ public class EventServiceImpl implements EventService {
     @Transactional
     public EventFullDto createEvent(NewEventDto newEventDto, Long userId) {
         if (newEventDto.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
-            throw new ForbiddenException("Не корректная дата " + newEventDto.getEventDate());
+            throw new BadRequestException("Не корректная дата " + newEventDto.getEventDate());
+        }
+        if (newEventDto.getPaid() == null) {
+            newEventDto.setPaid(false);
+        }
+        if (newEventDto.getParticipantLimit() == null) {
+            long participantLimitDefault = 0;
+            newEventDto.setParticipantLimit(participantLimitDefault);
+        }
+        if (newEventDto.getRequestModeration() == null) {
+            newEventDto.setRequestModeration(true);
         }
         Event event = EventMapper.toEvent(newEventDto);
         var initiator = userRepository.findById(userId);
@@ -62,19 +75,39 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional
     public EventFullDto updateEventUser(Long userId, Long eventId, EventUserRequest eventDto) {
-        if (eventDto.getEventDate() != null && eventDto.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
-            throw new ForbiddenException("Не корректная дата " + eventDto.getEventDate());
+        if (eventDto.getEventDate() != null && eventDto.getEventDate().isBefore(LocalDateTime.now())) {
+            throw new BadRequestException("Не корректная дата " + eventDto.getEventDate());
         }
         var eventPresent = eventRepository.findById(eventId);
         if (!eventPresent.isPresent()) {
             throw new ObjectNotFoundException("Событие не найдено " + eventId);
         }
+
+        if (eventDto.getTitle() != null && eventDto.getTitle().length() < 3) {
+            throw new BadRequestException("Слишком короткое название события");
+        }
+        if (eventDto.getTitle() != null && eventDto.getTitle().length() > 120) {
+            throw new BadRequestException("Слишком длинное название события");
+        }
+        if (eventDto.getDescription() != null && eventDto.getDescription().length() < 20) {
+            throw new BadRequestException("Слишком короткое описание события");
+        }
+        if (eventDto.getDescription() != null && eventDto.getDescription().length() > 7000) {
+            throw new BadRequestException("Слишком длинное описание события");
+        }
+        if (eventDto.getAnnotation() != null && eventDto.getAnnotation().length() < 20) {
+            throw new BadRequestException("Слишком короткая аннотация события");
+        }
+        if (eventDto.getAnnotation() != null && eventDto.getAnnotation().length() > 2000) {
+            throw new BadRequestException("Слишком длинная аннотация события");
+        }
+
         var event = eventPresent.get();
         if (!event.getInitiator().getId().equals(userId)) {
             throw new ObjectNotFoundException("Пользователь не найден " + userId);
         }
         if (event.getState() == State.PUBLISHED) {
-            throw new ForbiddenException("Событие нельзя изменить " + eventId);
+            throw new ConflictException("Событие нельзя изменить " + eventId);
         }
         EventMapper.toEventUserUpdate(event, eventDto);
         if (eventDto.getStateAction() != null) {
@@ -127,15 +160,35 @@ public class EventServiceImpl implements EventService {
     public List<EventFullDto> getEventAdmin(AdminSearchDto adminSearch, int from, int size) {
         Pageable pageable = PageRequest.of(from / size, size);
         List<Event> events = eventRepository.findAll(getRequestParam(adminSearch), pageable).getContent();
-        return events.stream().map(event -> EventMapper.toEventFullDto(event)).collect(Collectors.toList());
+        return events.stream().map(EventMapper::toEventFullDto).collect(Collectors.toList());
     }
 
     @Override
     @Transactional
     public EventFullDto updateEventAdmin(Long eventId, EventAdminRequest eventDtoRequest) {
         if (eventDtoRequest.getEventDate() != null && eventDtoRequest.getEventDate().isBefore(LocalDateTime.now().plusHours(1))) {
-            throw new ForbiddenException("Не корректная дата " + eventDtoRequest.getEventDate());
+            throw new BadRequestException("Не корректная дата " + eventDtoRequest.getEventDate());
         }
+
+        if (eventDtoRequest.getTitle() != null && eventDtoRequest.getTitle().length() < 3) {
+            throw new BadRequestException("Слишком короткое название события");
+        }
+        if (eventDtoRequest.getTitle() != null && eventDtoRequest.getTitle().length() > 120) {
+            throw new BadRequestException("Слишком длинное название события");
+        }
+        if (eventDtoRequest.getDescription() != null && eventDtoRequest.getDescription().length() < 20) {
+            throw new BadRequestException("Слишком короткое описание события");
+        }
+        if (eventDtoRequest.getDescription() != null && eventDtoRequest.getDescription().length() > 7000) {
+            throw new BadRequestException("Слишком длинное описание события");
+        }
+        if (eventDtoRequest.getAnnotation() != null && eventDtoRequest.getAnnotation().length() < 20) {
+            throw new BadRequestException("Слишком короткая аннотация события");
+        }
+        if (eventDtoRequest.getAnnotation() != null && eventDtoRequest.getAnnotation().length() > 2000) {
+            throw new BadRequestException("Слишком длинная аннотация события");
+        }
+
         var eventOptional = eventRepository.findById(eventId);
         if (!eventOptional.isPresent()) {
             throw new ObjectNotFoundException(String.format("Событие не найдено " + eventId));
@@ -143,15 +196,15 @@ public class EventServiceImpl implements EventService {
         var event = eventOptional.get();
         if (eventDtoRequest.getStateAction() != null) {
             if (StateAction.stringToState(String.valueOf(eventDtoRequest.getStateAction())) == event.getState()) {
-                throw new ForbiddenException("Не корректный статус " + eventDtoRequest.getStateAction());
+                throw new ConflictException("Не корректный статус " + eventDtoRequest.getStateAction());
             }
             if (StateAction.stringToStateAction(String.valueOf(eventDtoRequest.getStateAction())) == StateAction.PUBLISH_EVENT
                     && event.getState() == State.CANCELED) {
-                throw new ForbiddenException("Не корректный статус " + eventDtoRequest.getStateAction());
+                throw new ConflictException("Не корректный статус " + eventDtoRequest.getStateAction());
             }
             if (StateAction.stringToStateAction(String.valueOf(eventDtoRequest.getStateAction())) == StateAction.REJECT_EVENT
                     && event.getState() == State.PUBLISHED) {
-                throw new ForbiddenException("Не корректный статус " + eventDtoRequest.getStateAction());
+                throw new ConflictException("Не корректный статус " + eventDtoRequest.getStateAction());
             }
         }
         EventMapper.toEvent(event, eventDtoRequest);
@@ -203,10 +256,24 @@ public class EventServiceImpl implements EventService {
                 .uri(request.getRequestURI())
                 .timeStamp(LocalDateTime.now()).build();
         client.createStatistic(statRequestDto);
-        var event = eventRepository.findById(id);
-        if (event.isEmpty()) {
+
+        ResponseEntity<Object> existingStat = client.getStat(
+                LocalDateTime.now().minusYears(1).format(EventMapper.DATE_TIME_FORMATTER),
+                LocalDateTime.now().format(EventMapper.DATE_TIME_FORMATTER),
+                new String[]{request.getRequestURI()},
+                true
+        );
+
+        Optional<Event> event = eventRepository.findById(id);
+        if (event.isEmpty() || event.get().getState() != State.PUBLISHED) {
             throw new ObjectNotFoundException("Событие не найдено " + id);
         }
+
+        if (existingStat != null) {
+            long views = event.get().getViews() != null ? event.get().getViews() : 0;
+            event.get().setViews(views + 1);
+        }
+
         return EventMapper.toEventFullDto(event.get());
     }
 

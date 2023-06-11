@@ -8,6 +8,7 @@ import ru.practicum.events.dto.EventShortDto;
 import ru.practicum.events.dto.UserSearchDto;
 import ru.practicum.events.mapper.ParamMapper;
 import ru.practicum.events.service.EventService;
+import ru.practicum.exception.BadRequestException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Positive;
@@ -33,6 +34,12 @@ public class EventControllerPublic {
                                                   @Positive @RequestParam(name = "size", defaultValue = "10") Integer size,
                                                   HttpServletRequest request) {
         UserSearchDto param = ParamMapper.toUserSearch(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort);
+
+        if (param.getRangeStart() != null && param.getRangeEnd() != null
+                && param.getRangeEnd().isBefore(param.getRangeStart())) {
+            throw new BadRequestException("Дата начала не может быть позже даты окончания");
+        }
+
         return eventService.getAllEventsPublic(param, from, size, request);
     }
 

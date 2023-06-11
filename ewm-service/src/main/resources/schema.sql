@@ -2,24 +2,24 @@ DROP TABLE IF EXISTS users,events,category,request,compilation,compilation_event
 CREATE TABLE IF NOT EXISTS users
 (
     id    BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    email varchar(50) UNIQUE NOT NULL,
-    name  varchar(300)       NOT NULL
+    email varchar(255) UNIQUE NOT NULL,
+    name  varchar(255)       NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS category
 (
     id   BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    name varchar(30) NOT NULL UNIQUE
+    name varchar(255) NOT NULL UNIQUE
 );
 
 CREATE TABLE IF NOT EXISTS events
 (
     id                 BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    annotation         varchar(2000)                                     NOT NULL,
+    annotation         TEXT                                   NOT NULL,
     category_id        BIGINT REFERENCES CATEGORY (id) ON DELETE CASCADE NOT NULL,
     confirmed_requests BIGINT,
     created_on         TIMESTAMP WITHOUT TIME ZONE,
-    description        varchar(7000),
+    description        TEXT,
     event_date         TIMESTAMP WITHOUT TIME ZONE                       NOT NULL,
     initiator_id       BIGINT REFERENCES USERS (id) ON DELETE CASCADE,
     lat                float,
@@ -28,8 +28,8 @@ CREATE TABLE IF NOT EXISTS events
     participant_limit  BIGINT,
     published_on       TIMESTAMP WITHOUT TIME ZONE,
     request_moderation boolean,
-    state              varchar(30),
-    title              varchar(120),
+    state              varchar(255),
+    title              varchar(255),
     views              int
 );
 
@@ -39,14 +39,14 @@ CREATE TABLE IF NOT EXISTS request
     event_id     BIGINT REFERENCES events (id),
     requester_id BIGINT REFERENCES users (id),
     created      TIMESTAMP WITHOUT TIME ZONE,
-    state        varchar(30)
+    state        varchar(255)
 );
 
 CREATE TABLE IF NOT EXISTS compilation
 (
     id     BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     pinned boolean,
-    title  varchar(2000)
+    title  varchar(255)
 );
 
 CREATE TABLE IF NOT EXISTS compilation_events

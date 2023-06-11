@@ -11,6 +11,7 @@ import ru.practicum.compilation.mapper.CompilationMapper;
 import ru.practicum.compilation.model.Compilation;
 import ru.practicum.compilation.repository.CompilationRepository;
 import ru.practicum.events.repository.EventRepository;
+import ru.practicum.exception.BadRequestException;
 import ru.practicum.exception.ObjectNotFoundException;
 
 import java.util.Collections;
@@ -28,8 +29,14 @@ public class CompilationServiceImpl implements CompilationService {
     @Transactional
     public CompilationDto createCompilation(NewCompilationDto newCompilationDto) {
         Compilation compilation = CompilationMapper.toCompilation(new Compilation(), newCompilationDto);
+        if (newCompilationDto.getTitle() != null && newCompilationDto.getTitle().length() > 50) {
+            throw new BadRequestException("Слишком длинное название подборки");
+        }
         if (newCompilationDto.getEvents() != null) {
             compilation.setEvents(eventRepository.findAllByIdIn(newCompilationDto.getEvents()));
+        }
+        if (compilation.getPinned() == null) {
+            compilation.setPinned(false);
         }
         Compilation createdCompilation = repository.save(compilation);
         return CompilationMapper.toCompilationDto(createdCompilation);
@@ -42,12 +49,20 @@ public class CompilationServiceImpl implements CompilationService {
         if (!compilationOptional.isPresent()) {
             throw new ObjectNotFoundException("Подборка не найдена " + id);
         }
+        if (newCompilationDto.getTitle() != null && newCompilationDto.getTitle().length() > 50) {
+            throw new BadRequestException("Слишком длинное название подборки");
+        }
+
         var compilation = compilationOptional.get();
         CompilationMapper.toCompilation(compilation, newCompilationDto);
         compilation.setId(id);
+        if (compilation.getPinned() == null) {
+            compilation.setPinned(false);
+        }
         if (newCompilationDto.getEvents() != null) {
             compilation.setEvents(eventRepository.findAllByIdIn(newCompilationDto.getEvents()));
         }
+
         return CompilationMapper.toCompilationDto(compilation);
     }
 

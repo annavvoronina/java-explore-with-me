@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.events.model.State;
 import ru.practicum.events.repository.EventRepository;
-import ru.practicum.exception.ForbiddenException;
+import ru.practicum.exception.ConflictException;
 import ru.practicum.exception.ObjectNotFoundException;
 import ru.practicum.request.dto.EventRequestFullDto;
 import ru.practicum.request.dto.EventRequestStatusUpdateRequest;
@@ -40,26 +40,31 @@ public class RequestServiceImpl implements RequestService {
         var event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new ObjectNotFoundException("Событие не найдено " + eventId));
         if (Objects.equals(event.getInitiator().getId(), userId)) {
-            throw new ForbiddenException("Не корректный инициатор " + event.getInitiator().getId());
+            throw new ConflictException("Не корректный инициатор " + event.getInitiator().getId());
         }
-        Optional<Request> requestDb = requestRepository.findByRequesterIdAndEventId(userId, eventId);
-        if (requestDb.isPresent()) {
-            throw new ForbiddenException("Повторный запрос от пользователя " + userId + " на событие" + eventId);
+        Optional<Request> request = requestRepository.findByRequesterIdAndEventId(userId, eventId);
+        if (request.isPresent()) {
+            throw new ConflictException("Повторный запрос от пользователя " + userId + " на событие" + eventId);
         }
+
+        List<Request> requestList = requestRepository.findAllEventRequestsByEventIs(event);
+        if (event.getParticipantLimit() > 0 && requestList.size() >= event.getParticipantLimit()) {
+            throw new ConflictException("Превышен лимит участников");
+        }
+
         if (event.getState() != State.PUBLISHED) {
-            throw new ForbiddenException("Не корректный статус " + event.getState());
+            throw new ConflictException("Не корректный статус " + event.getState());
         }
+
         if (event.getParticipantLimit() == 0) {
-            throw new ForbiddenException("Участников должно быть больше 0");
+            eventRequest.setStatus(RequestStatus.CONFIRMED);
+            event.setConfirmedRequests(event.getConfirmedRequests() != null ? event.getConfirmedRequests() + 1 : 1);
         } else {
-            if (!event.getRequestModeration()) {
-                event.setParticipantLimit(event.getParticipantLimit() - 1);
-                eventRepository.save(event);
-            }
+            eventRequest.setStatus(RequestStatus.PENDING);
         }
+
         eventRequest.setRequester(requester);
         eventRequest.setEvent(event);
-        eventRequest.setStatus(RequestStatus.PENDING);
         Request createdCategory = requestRepository.save(eventRequest);
         return RequestMapper.toEventRequestDto(createdCategory);
     }
@@ -106,14 +111,11 @@ public class RequestServiceImpl implements RequestService {
             throw new ObjectNotFoundException("Событие не найдено " + eventId);
         }
         var event = eventOptional.get();
-        if (event.getParticipantLimit() == 0) {
-            throw new ForbiddenException("ParticipantLimit is 0");
-        } else {
-            if (event.getRequestModeration()) {
-                event.setParticipantLimit(event.getParticipantLimit() - eventRequestStatusUpdateRequest.getRequestIds().size());
-                eventRepository.save(event);
-            }
+        List<Request> requestList = requestRepository.findAllEventRequestsByEventIs(event);
+        if (event.getParticipantLimit() > 0 && requestList.size() >= event.getParticipantLimit()) {
+            throw new ConflictException("Превышен лимит участников");
         }
+
         var result = requestRepository.findEventRequestsByIdInAndEventIs(eventRequestStatusUpdateRequest.getRequestIds(), event);
         if (result.size() == 0) {
             return eventRequestListDto;

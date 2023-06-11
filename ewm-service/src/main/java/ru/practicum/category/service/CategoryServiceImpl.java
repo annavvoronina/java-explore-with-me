@@ -12,7 +12,8 @@ import ru.practicum.category.model.Category;
 import ru.practicum.category.repository.CategoryRepository;
 import ru.practicum.events.model.Event;
 import ru.practicum.events.repository.EventRepository;
-import ru.practicum.exception.ForbiddenException;
+import ru.practicum.exception.BadRequestException;
+import ru.practicum.exception.ConflictException;
 import ru.practicum.exception.ObjectNotFoundException;
 
 import java.util.List;
@@ -28,6 +29,16 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     @Override
     public CategoryDto createCategory(NewCategoryDto newCategoryDto) {
+        Category existingCategory = categoryRepository.findByName(newCategoryDto.getName());
+
+        if (existingCategory != null) {
+            throw new ConflictException("Категория с таким именем уже существует");
+        }
+
+        if (newCategoryDto.getName().length() > 50) {
+            throw new BadRequestException("Слишком длинное название категории");
+        }
+
         Category category = categoryRepository.save(CategoryMapper.toCategory(newCategoryDto));
         return CategoryMapper.toCategoryDto(category);
     }
@@ -37,6 +48,11 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryDto updateCategory(Long id, CategoryDto categoryDto) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Категория не найдена " + id));
+
+        if (categoryDto.getName().length() > 50) {
+            throw new BadRequestException("Слишком длинное название категории");
+        }
+
         CategoryMapper.toCategory(category, categoryDto);
         return CategoryMapper.toCategoryDto(category);
     }
@@ -49,7 +65,7 @@ public class CategoryServiceImpl implements CategoryService {
         if (event.isEmpty()) {
             categoryRepository.deleteById(id);
         } else {
-            throw new ForbiddenException("У категории " + id + "есть события");
+            throw new ConflictException("У категории " + id + "есть события");
         }
     }
 

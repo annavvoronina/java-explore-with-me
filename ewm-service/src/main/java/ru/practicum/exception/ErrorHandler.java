@@ -27,6 +27,18 @@ public class ErrorHandler {
         return new ErrorResponse(e.getMessage());
     }
 
+    @ExceptionHandler
+    @ResponseStatus(BAD_REQUEST)
+    public ErrorResponse notCorrectState(final BadRequestException e) {
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(CONFLICT)
+    public ErrorResponse notCorrectState(final ConflictException e) {
+        return new ErrorResponse(e.getMessage());
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String, String>> handleIllegalArgumentException(IllegalArgumentException exception) {
         return new ResponseEntity<>(

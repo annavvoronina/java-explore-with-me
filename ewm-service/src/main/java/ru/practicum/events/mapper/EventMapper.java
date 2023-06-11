@@ -16,7 +16,7 @@ import java.util.Optional;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class EventMapper {
 
-    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public static Event toEvent(NewEventDto newEventDto) {
         Event event = new Event();
@@ -60,19 +60,19 @@ public class EventMapper {
         return new EventFullDto(event.getId(),
                 event.getAnnotation(),
                 CategoryMapper.toCategoryDto(event.getCategory()),
-                event.getConfirmedRequests(),
+                event.getConfirmedRequests() != null ? event.getConfirmedRequests() : 0,
                 event.getCreatedOn().format(DATE_TIME_FORMATTER),
                 event.getDescription(),
                 event.getEventDate() != null ? event.getEventDate().format(DATE_TIME_FORMATTER) : null,
                 UserMapper.toUserShortDto(event.getInitiator()),
                 new Location(event.getLat(), event.getLon()),
                 event.getPaid(),
-                event.getParticipantLimit(),
+                event.getParticipantLimit() != null ? event.getParticipantLimit() : 0,
                 event.getPublishedOn() != null ? event.getPublishedOn().format(DATE_TIME_FORMATTER) : null,
                 event.getRequestModeration(),
                 event.getState(),
                 event.getTitle(),
-                event.getViews());
+                event.getViews() != null ? event.getViews() : 0);
     }
 
     public static EventShortDto toEventShortDto(Event event) {

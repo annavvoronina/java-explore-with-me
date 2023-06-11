@@ -2,6 +2,7 @@ package ru.practicum.users.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.lang.Nullable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.users.dto.NewUserRequest;
@@ -20,10 +21,12 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public List<UserDto> getUsers(@RequestParam(name = "ids") Long[] ids,
-                                  @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") int from,
-                                  @Positive @RequestParam(name = "size", defaultValue = "10") int size) {
-        return userService.getUsers(ids, from, size);
+    public List<UserDto> getUsers(@Nullable @RequestParam(name = "ids") Long[] ids,
+                                  @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                  @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
+        Long[] idsParam = ids == null ? new Long[]{} : ids;
+
+        return userService.getUsers(idsParam, from, size);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
