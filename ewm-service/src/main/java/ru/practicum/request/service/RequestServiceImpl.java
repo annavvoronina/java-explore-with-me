@@ -106,7 +106,7 @@ public class RequestServiceImpl implements RequestService {
         if (requester.isEmpty()) {
             throw new ObjectNotFoundException("Пользователь не найден " + userId);
         }
-        var eventOptional = eventRepository.findById(eventId);
+        var eventOptional = eventRepository.findByInitiatorAndId(requester.get(), eventId);
         if (eventOptional.isEmpty()) {
             throw new ObjectNotFoundException("Событие не найдено " + eventId);
         }
@@ -114,6 +114,10 @@ public class RequestServiceImpl implements RequestService {
         List<Request> requestList = requestRepository.findAllEventRequestsByEventIs(event);
         if (event.getParticipantLimit() > 0 && requestList.size() >= event.getParticipantLimit()) {
             throw new ConflictException("Превышен лимит участников");
+        }
+
+        if (eventRequestStatusUpdateRequest == null) {
+            throw new ConflictException("Список запросов не передан");
         }
 
         var result = requestRepository.findEventRequestsByIdInAndEventIs(eventRequestStatusUpdateRequest.getRequestIds(), event);

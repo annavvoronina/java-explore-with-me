@@ -8,7 +8,7 @@ public enum StateAction {
         try {
             state = StateAction.valueOf(stringState);
         } catch (Exception e) {
-            state = PUBLISH_EVENT;
+            state = SEND_TO_REVIEW;
         }
 
         return state;
