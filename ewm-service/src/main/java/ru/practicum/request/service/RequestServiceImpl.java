@@ -128,6 +128,11 @@ public class RequestServiceImpl implements RequestService {
             eventRequest.setStatus(eventRequestStatusUpdateRequest.getStatus());
             requestRepository.save(eventRequest);
         });
+
+        if (eventRequestStatusUpdateRequest.getStatus() == RequestStatus.CONFIRMED) {
+            event.setConfirmedRequests(event.getConfirmedRequests() + 1);
+        }
+        
         if (eventRequestStatusUpdateRequest.getStatus() == RequestStatus.REJECTED) {
             eventRequestListDto.setRejectedRequests(requestRepository.findEventRequestsByIdInAndEventIs(eventRequestStatusUpdateRequest.getRequestIds(), event)
                     .stream()
@@ -138,7 +143,6 @@ public class RequestServiceImpl implements RequestService {
                     .stream()
                     .map(RequestMapper::toEventRequestDtoPart)
                     .collect(Collectors.toList()));
-            event.setConfirmedRequests(event.getConfirmedRequests() + 1);
         }
         return eventRequestListDto;
     }
