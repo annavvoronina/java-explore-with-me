@@ -114,9 +114,6 @@ public class RequestServiceImpl implements RequestService {
         List<Request> requestList = requestRepository.findAllEventRequestsByEventIs(event);
         if (event.getParticipantLimit() > 0 && requestList.size() >= event.getParticipantLimit()) {
             throw new ConflictException("Превышен лимит участников");
-        } else {
-            event.setConfirmedRequests(event.getConfirmedRequests() + 1);
-        }
 
         if (eventRequestStatusUpdateRequest == null) {
             throw new ConflictException("Список запросов не передан");
@@ -140,6 +137,7 @@ public class RequestServiceImpl implements RequestService {
                     .stream()
                     .map(RequestMapper::toEventRequestDtoPart)
                     .collect(Collectors.toList()));
+            event.setConfirmedRequests(event.getConfirmedRequests() + 1);
         }
         return eventRequestListDto;
     }
