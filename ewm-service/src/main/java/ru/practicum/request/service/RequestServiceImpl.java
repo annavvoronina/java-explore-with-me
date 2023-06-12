@@ -130,7 +130,7 @@ public class RequestServiceImpl implements RequestService {
         });
 
         if (eventRequestStatusUpdateRequest.getStatus() == RequestStatus.CONFIRMED) {
-            event.setConfirmedRequests(event.getConfirmedRequests() + 1);
+            event.setConfirmedRequests(event.getConfirmedRequests() != null ? event.getConfirmedRequests() + 1 : 1);
             eventRepository.save(event);
         }
 
