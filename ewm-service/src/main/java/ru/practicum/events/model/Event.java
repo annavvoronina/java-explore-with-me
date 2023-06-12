@@ -25,6 +25,7 @@ public class Event {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
+    @Column(name = "confirmed_requests")
     private Long confirmedRequests;
     @Column(name = "created_on")
     private LocalDateTime createdOn;
