@@ -132,7 +132,7 @@ public class RequestServiceImpl implements RequestService {
         if (eventRequestStatusUpdateRequest.getStatus() == RequestStatus.CONFIRMED) {
             event.setConfirmedRequests(event.getConfirmedRequests() + 1);
         }
-        
+
         if (eventRequestStatusUpdateRequest.getStatus() == RequestStatus.REJECTED) {
             eventRequestListDto.setRejectedRequests(requestRepository.findEventRequestsByIdInAndEventIs(eventRequestStatusUpdateRequest.getRequestIds(), event)
                     .stream()
