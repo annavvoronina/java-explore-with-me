@@ -10,6 +10,8 @@ import ru.practicum.events.mapper.ParamMapper;
 import ru.practicum.events.model.State;
 import ru.practicum.events.service.EventService;
 
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @Validated
@@ -25,8 +27,8 @@ public class EventControllerAdmin {
                                             @RequestParam(name = "categories", required = false) List<Long> categories,
                                             @RequestParam(required = false) String rangeStart,
                                             @RequestParam(required = false) String rangeEnd,
-                                            @RequestParam(name = "from", defaultValue = "0") int from,
-                                            @RequestParam(name = "size", defaultValue = "10") int size) {
+                                            @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") int from,
+                                            @Positive @RequestParam(name = "size", defaultValue = "10") int size) {
         AdminSearchDto param = ParamMapper.toAdminSearch(userIds, states, categories, rangeStart, rangeEnd);
         return eventService.getEventAdmin(param, from, size);
     }

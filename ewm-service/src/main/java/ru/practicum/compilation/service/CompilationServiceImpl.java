@@ -10,11 +10,13 @@ import ru.practicum.compilation.dto.NewCompilationDto;
 import ru.practicum.compilation.mapper.CompilationMapper;
 import ru.practicum.compilation.model.Compilation;
 import ru.practicum.compilation.repository.CompilationRepository;
+import ru.practicum.events.model.Event;
 import ru.practicum.events.repository.EventRepository;
 import ru.practicum.exception.BadRequestException;
 import ru.practicum.exception.ObjectNotFoundException;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,11 +31,11 @@ public class CompilationServiceImpl implements CompilationService {
     @Transactional
     public CompilationDto createCompilation(NewCompilationDto newCompilationDto) {
         Compilation compilation = CompilationMapper.toCompilation(new Compilation(), newCompilationDto);
-        if (newCompilationDto.getTitle() != null && newCompilationDto.getTitle().length() > 50) {
+        if (newCompilationDto.getTitle() != null && !newCompilationDto.getTitle().isBlank()) {
             throw new BadRequestException("Слишком длинное название подборки");
         }
         if (newCompilationDto.getEvents() != null) {
-            compilation.setEvents(eventRepository.findAllByIdIn(newCompilationDto.getEvents()));
+            compilation.setEvents(new HashSet<>(eventRepository.findAllByIdIn(newCompilationDto.getEvents())));
         }
         if (compilation.getPinned() == null) {
             compilation.setPinned(false);
@@ -60,7 +62,7 @@ public class CompilationServiceImpl implements CompilationService {
             compilation.setPinned(false);
         }
         if (newCompilationDto.getEvents() != null) {
-            compilation.setEvents(eventRepository.findAllByIdIn(newCompilationDto.getEvents()));
+            compilation.setEvents(new HashSet<>(eventRepository.findAllByIdIn(newCompilationDto.getEvents())));
         }
 
         return CompilationMapper.toCompilationDto(compilation);

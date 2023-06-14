@@ -4,16 +4,23 @@ public enum State {
     PENDING, PUBLISHED, CANCELED;
 
     public static State stringToState(String stringState) {
-        State state;
+        State state = State.PENDING;
         try {
-            if (stringState == null) {
-                state = State.PENDING;
-            } else {
-                state = State.valueOf(stringState);
+            switch (StateAction.valueOf(stringState)) {
+                case PUBLISH_EVENT:
+                    state = State.PUBLISHED;
+                    break;
+                case CANCEL_REVIEW:
+                case REJECT_EVENT:
+                    state = State.CANCELED;
+                    break;
             }
-        } catch (Exception e) {
-            throw new IllegalStateException("Unknown state: " + stringState);
+
+        } catch (Exception ignored) {
+
         }
+
         return state;
     }
+
 }

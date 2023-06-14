@@ -2,6 +2,7 @@ package ru.practicum.events.service;
 
 import com.querydsl.core.BooleanBuilder;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -43,6 +44,8 @@ public class EventServiceImpl implements EventService {
     private final StatClientMain client;
     private final RequestRepository requestRepository;
 
+    @Value("${app.name}") String appName;
+
     @Override
     @Transactional
     public EventFullDto createEvent(NewEventDto newEventDto, Long userId) {
@@ -83,23 +86,14 @@ public class EventServiceImpl implements EventService {
             throw new ObjectNotFoundException("Событие не найдено " + eventId);
         }
 
-        if (eventDto.getTitle() != null && eventDto.getTitle().length() < 3) {
-            throw new BadRequestException("Слишком короткое название события");
+        if (eventDto.getTitle() == null || eventDto.getTitle().isBlank()) {
+            throw new BadRequestException("Пустое название события");
         }
-        if (eventDto.getTitle() != null && eventDto.getTitle().length() > 120) {
-            throw new BadRequestException("Слишком длинное название события");
+        if (eventDto.getDescription() == null || eventDto.getDescription().isBlank()) {
+            throw new BadRequestException("Пустое описание события");
         }
-        if (eventDto.getDescription() != null && eventDto.getDescription().length() < 20) {
-            throw new BadRequestException("Слишком короткое описание события");
-        }
-        if (eventDto.getDescription() != null && eventDto.getDescription().length() > 7000) {
-            throw new BadRequestException("Слишком длинное описание события");
-        }
-        if (eventDto.getAnnotation() != null && eventDto.getAnnotation().length() < 20) {
-            throw new BadRequestException("Слишком короткая аннотация события");
-        }
-        if (eventDto.getAnnotation() != null && eventDto.getAnnotation().length() > 2000) {
-            throw new BadRequestException("Слишком длинная аннотация события");
+        if (eventDto.getAnnotation() == null || eventDto.getAnnotation().isBlank()) {
+            throw new BadRequestException("Пустая аннотация события");
         }
 
         var event = eventPresent.get();
@@ -111,7 +105,7 @@ public class EventServiceImpl implements EventService {
         }
         EventMapper.toEventUserUpdate(event, eventDto);
         if (eventDto.getStateAction() != null) {
-            event.setState(StateAction.stringToState(eventDto.getStateAction()));
+            event.setState(State.stringToState(String.valueOf(eventDto.getStateAction())));
         }
         event.setId(eventId);
         return EventMapper.toEventFullDto(event);
@@ -170,23 +164,14 @@ public class EventServiceImpl implements EventService {
             throw new BadRequestException("Не корректная дата " + eventDtoRequest.getEventDate());
         }
 
-        if (eventDtoRequest.getTitle() != null && eventDtoRequest.getTitle().length() < 3) {
-            throw new BadRequestException("Слишком короткое название события");
+        if (eventDtoRequest.getTitle() == null || eventDtoRequest.getTitle().isBlank()) {
+            throw new BadRequestException("Пустое название события");
         }
-        if (eventDtoRequest.getTitle() != null && eventDtoRequest.getTitle().length() > 120) {
-            throw new BadRequestException("Слишком длинное название события");
+        if (eventDtoRequest.getDescription() == null || eventDtoRequest.getDescription().isBlank()) {
+            throw new BadRequestException("Пустое описание события");
         }
-        if (eventDtoRequest.getDescription() != null && eventDtoRequest.getDescription().length() < 20) {
-            throw new BadRequestException("Слишком короткое описание события");
-        }
-        if (eventDtoRequest.getDescription() != null && eventDtoRequest.getDescription().length() > 7000) {
-            throw new BadRequestException("Слишком длинное описание события");
-        }
-        if (eventDtoRequest.getAnnotation() != null && eventDtoRequest.getAnnotation().length() < 20) {
-            throw new BadRequestException("Слишком короткая аннотация события");
-        }
-        if (eventDtoRequest.getAnnotation() != null && eventDtoRequest.getAnnotation().length() > 2000) {
-            throw new BadRequestException("Слишком длинная аннотация события");
+        if (eventDtoRequest.getAnnotation() == null || eventDtoRequest.getAnnotation().isBlank()) {
+            throw new BadRequestException("Пустая аннотация события");
         }
 
         var eventOptional = eventRepository.findById(eventId);
@@ -195,7 +180,7 @@ public class EventServiceImpl implements EventService {
         }
         var event = eventOptional.get();
         if (eventDtoRequest.getStateAction() != null) {
-            if (StateAction.stringToState(String.valueOf(eventDtoRequest.getStateAction())) == event.getState()) {
+            if (State.stringToState(String.valueOf(eventDtoRequest.getStateAction())) == event.getState()) {
                 throw new ConflictException("Не корректный статус " + eventDtoRequest.getStateAction());
             }
             if (StateAction.stringToStateAction(String.valueOf(eventDtoRequest.getStateAction())) == StateAction.PUBLISH_EVENT
@@ -211,7 +196,7 @@ public class EventServiceImpl implements EventService {
         if (StateAction.stringToStateAction(String.valueOf(eventDtoRequest.getStateAction())) == StateAction.PUBLISH_EVENT) {
             event.setPublishedOn(LocalDateTime.now().withNano(0));
         }
-        event.setState(StateAction.stringToState(String.valueOf(eventDtoRequest.getStateAction())));
+        event.setState(State.stringToState(String.valueOf(eventDtoRequest.getStateAction())));
         event.setId(eventId);
         return EventMapper.toEventFullDto(event);
     }
@@ -222,7 +207,7 @@ public class EventServiceImpl implements EventService {
                                                   int size,
                                                   HttpServletRequest request) {
         Pageable pageable = PageRequest.of(from / size, size);
-        StatisticRequestDto statRequestDto = StatisticRequestDto.builder().app("ExploreWithMe")
+        StatisticRequestDto statRequestDto = StatisticRequestDto.builder().app(appName)
                 .ip(request.getRemoteAddr())
                 .uri(request.getRequestURI())
                 .timeStamp(LocalDateTime.now()).build();
@@ -251,7 +236,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public EventFullDto getEventPublicById(Long id,
                                            HttpServletRequest request) {
-        StatisticRequestDto statRequestDto = StatisticRequestDto.builder().app("ExploreWithMe")
+        StatisticRequestDto statRequestDto = StatisticRequestDto.builder().app(appName)
                 .ip(request.getRemoteAddr())
                 .uri(request.getRequestURI())
                 .timeStamp(LocalDateTime.now()).build();

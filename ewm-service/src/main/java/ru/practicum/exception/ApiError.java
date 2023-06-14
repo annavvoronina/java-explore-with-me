@@ -10,9 +10,9 @@ import java.util.List;
 @Getter
 @Builder
 public class ApiError {
-    List<FieldError> errors;
-    String message;
-    String reason;
-    String status;
-    LocalDateTime timestamp;
+    private List<FieldError> errors;
+    private String message;
+    private String reason;
+    private String status;
+    private LocalDateTime timestamp;
 }

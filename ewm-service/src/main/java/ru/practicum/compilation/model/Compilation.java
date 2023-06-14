@@ -7,7 +7,7 @@ import lombok.Setter;
 import ru.practicum.events.model.Event;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,7 +20,7 @@ public class Compilation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
-    private List<Event> events;
+    private Set<Event> events;
     @Column(name = "pinned", nullable = false)
     private Boolean pinned;
     @Column(name = "title", nullable = false, length = 2000)

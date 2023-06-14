@@ -2,6 +2,7 @@ package ru.practicum.events.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 import ru.practicum.events.model.Location;
 
 import javax.validation.constraints.NotBlank;
@@ -26,13 +27,15 @@ public class NewEventDto {
     @Size(max = 7000, message = "максимальная длина 2000 символов")
     @NotBlank
     private String description;
+    @NotNull
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss", iso = DateTimeFormat.ISO.DATE_TIME)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
     private Location location;
-    private Boolean paid;
+    private boolean paid;
     @PositiveOrZero
     private Long participantLimit;
-    private Boolean requestModeration;
+    private boolean requestModeration = true;
     @Size(min = 3, message = "минимальная длина 3 символов")
     @Size(max = 120, message = "максимальная длина 120 символов")
     @NotBlank

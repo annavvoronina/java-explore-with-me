@@ -52,8 +52,8 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public void deleteCategory(Long id) {
         getCategoryById(id);
-        Optional<Event> event = eventRepository.findByCategoryId(id);
-        if (event.isEmpty()) {
+        Optional<Boolean> eventExists = eventRepository.existsByCategoryId(id);
+        if (eventExists.orElse(false)) {
             categoryRepository.deleteById(id);
         } else {
             throw new ConflictException("У категории " + id + "есть события");
