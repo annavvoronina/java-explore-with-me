@@ -52,15 +52,9 @@ public class EventServiceImpl implements EventService {
         if (newEventDto.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
             throw new BadRequestException("Не корректная дата " + newEventDto.getEventDate());
         }
-        if (newEventDto.getPaid() == null) {
-            newEventDto.setPaid(false);
-        }
         if (newEventDto.getParticipantLimit() == null) {
             long participantLimitDefault = 0;
             newEventDto.setParticipantLimit(participantLimitDefault);
-        }
-        if (newEventDto.getRequestModeration() == null) {
-            newEventDto.setRequestModeration(true);
         }
         Event event = EventMapper.toEvent(newEventDto);
         var initiator = userRepository.findById(userId);

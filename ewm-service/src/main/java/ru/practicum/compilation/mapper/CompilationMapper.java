@@ -24,7 +24,8 @@ public class CompilationMapper {
     public static Compilation toCompilation(Compilation compilation, NewCompilationDto newCompilationDto) {
         compilation.setId(newCompilationDto.getId());
         Optional.ofNullable(newCompilationDto.getTitle()).ifPresent(compilation::setTitle);
-        Optional.ofNullable(newCompilationDto.getPinned()).ifPresent(compilation::setPinned);
+        compilation.setPinned(newCompilationDto.isPinned());
+
         return compilation;
     }
 }
