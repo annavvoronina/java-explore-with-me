@@ -1,14 +1,12 @@
 package ru.practicum.compilation.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.compilation.dto.CompilationDto;
 import ru.practicum.compilation.service.CompilationService;
 
 import java.util.List;
 
-@Validated
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(path = "/compilations")

@@ -32,22 +32,6 @@ public class UserServiceImpl implements UserService {
             throw new ConflictException("Пользователь с таким email уже существует");
         }
 
-        if (newUser.getName().length() < 2) {
-            throw new BadRequestException("Слишком короткое имя пользователя");
-        }
-
-        if (newUser.getName().length() > 250) {
-            throw new BadRequestException("Слишком длинное имя пользователя");
-        }
-
-        if (newUser.getEmail().length() < 6) {
-            throw new BadRequestException("Слишком короткий email пользователя");
-        }
-
-        if (newUser.getEmail().length() > 254) {
-            throw new BadRequestException("Слишком длинный email пользователя");
-        }
-
         User createdUser = repository.save(UserMapper.toUser(newUser));
         return UserMapper.toUserDto(createdUser);
     }

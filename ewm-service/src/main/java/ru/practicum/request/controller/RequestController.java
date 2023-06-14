@@ -11,7 +11,6 @@ import ru.practicum.request.service.RequestService;
 
 import java.util.List;
 
-@Validated
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(path = "/users")

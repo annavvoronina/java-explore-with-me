@@ -26,7 +26,7 @@ public class EventControllerPublic {
     public List<EventShortDto> getAllEventsPublic(@RequestParam(name = "text", required = false) String text,
                                                   @RequestParam(name = "categories", required = false) List<Long> categories,
                                                   @RequestParam(name = "paid", required = false) Boolean paid,
-                                                  @RequestParam(name = "onlyAvailable", defaultValue = "false", required = false) Boolean onlyAvailable,
+                                                  @RequestParam(name = "onlyAvailable", defaultValue = "false") Boolean onlyAvailable,
                                                   @RequestParam(required = false) String rangeStart,
                                                   @RequestParam(required = false) String rangeEnd,
                                                   @RequestParam(name = "sort", defaultValue = "EVENT_DATE") String sort,

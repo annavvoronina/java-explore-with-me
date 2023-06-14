@@ -27,7 +27,6 @@ public class NewEventDto {
     @Size(max = 7000, message = "максимальная длина 2000 символов")
     @NotBlank
     private String description;
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss", iso = DateTimeFormat.ISO.DATE_TIME)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
     private Location location;

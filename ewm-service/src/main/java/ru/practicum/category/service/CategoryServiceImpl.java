@@ -35,10 +35,6 @@ public class CategoryServiceImpl implements CategoryService {
             throw new ConflictException("Категория с таким именем уже существует");
         }
 
-        if (newCategoryDto.getName().length() > 50) {
-            throw new BadRequestException("Слишком длинное название категории");
-        }
-
         Category category = categoryRepository.save(CategoryMapper.toCategory(newCategoryDto));
         return CategoryMapper.toCategoryDto(category);
     }
@@ -48,10 +44,6 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryDto updateCategory(Long id, CategoryDto categoryDto) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Категория не найдена " + id));
-
-        if (categoryDto.getName().length() > 50) {
-            throw new BadRequestException("Слишком длинное название категории");
-        }
 
         CategoryMapper.toCategory(category, categoryDto);
         return CategoryMapper.toCategoryDto(category);
