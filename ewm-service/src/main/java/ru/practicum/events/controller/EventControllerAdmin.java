@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.events.dto.AdminSearchDto;
-import ru.practicum.events.dto.EventAdminRequest;
 import ru.practicum.events.dto.EventFullDto;
+import ru.practicum.events.dto.EventRequestDto;
 import ru.practicum.events.mapper.ParamMapper;
 import ru.practicum.events.model.State;
 import ru.practicum.events.service.EventService;
@@ -35,7 +35,7 @@ public class EventControllerAdmin {
 
     @PatchMapping("/{eventId}")
     public EventFullDto updateEventAdmin(@PathVariable Long eventId,
-                                         @Validated @RequestBody EventAdminRequest eventDtoRequest) {
+                                         @Validated @RequestBody EventRequestDto eventDtoRequest) {
         return eventService.updateEventAdmin(eventId, eventDtoRequest);
     }
 }

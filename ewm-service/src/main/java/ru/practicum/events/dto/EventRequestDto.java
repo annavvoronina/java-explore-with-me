@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class EventRequest {
+public class EventRequestDto {
     @Size(min = 20, message = "Слишком короткая аннотация")
     @Size(max = 2000, message = "Слишком длинная аннотация")
     private String annotation;

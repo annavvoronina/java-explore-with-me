@@ -9,7 +9,7 @@ import java.util.List;
 public interface EventService {
     EventFullDto createEvent(NewEventDto newEventDto, Long userId);
 
-    EventFullDto updateEventUser(Long userId, Long eventId, EventUserRequest eventDtoUser);
+    EventFullDto updateEventUser(Long userId, Long eventId, EventRequestDto eventDtoUser);
 
     List<EventShortDto> getAllByUserId(Long userId, int from, int size);
 
@@ -19,7 +19,7 @@ public interface EventService {
 
     List<EventFullDto> getEventAdmin(AdminSearchDto adminSearch, int from, int size);
 
-    EventFullDto updateEventAdmin(Long eventId, EventAdminRequest eventDtoRequest);
+    EventFullDto updateEventAdmin(Long eventId, EventRequestDto eventDtoRequest);
 
     List<EventShortDto> getAllEventsPublic(UserSearchDto userSearch, int from, int size, HttpServletRequest request);
 

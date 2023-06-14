@@ -10,8 +10,6 @@ import java.time.format.DateTimeFormatter;
 
 @UtilityClass
 public class StatMapper {
-    public final DateTimeFormatter DATA_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
     public static StatisticResponseDto toStatDto(Stat stat) {
         return StatisticResponseDto.builder()
                 .app(stat.getApp())

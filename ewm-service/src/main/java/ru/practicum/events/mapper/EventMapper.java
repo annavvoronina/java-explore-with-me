@@ -34,7 +34,7 @@ public class EventMapper {
         return event;
     }
 
-    public static Event toEvent(Event event, EventAdminRequest eventAdminRequest) {
+    public static Event toEvent(Event event, EventRequestDto eventAdminRequest) {
         Optional.ofNullable(eventAdminRequest.getAnnotation()).ifPresent(event::setAnnotation);
         Optional.ofNullable(eventAdminRequest.getDescription()).ifPresent(event::setDescription);
         Optional.ofNullable(eventAdminRequest.getEventDate()).ifPresent(event::setEventDate);
@@ -45,7 +45,7 @@ public class EventMapper {
         return event;
     }
 
-    public static Event toEventUserUpdate(Event event, EventUserRequest eventUserRequest) {
+    public static Event toEventUserUpdate(Event event, EventRequestDto eventUserRequest) {
         Optional.ofNullable(eventUserRequest.getAnnotation()).ifPresent(event::setAnnotation);
         Optional.ofNullable(eventUserRequest.getDescription()).ifPresent(event::setDescription);
         Optional.ofNullable(eventUserRequest.getEventDate()).ifPresent(event::setEventDate);

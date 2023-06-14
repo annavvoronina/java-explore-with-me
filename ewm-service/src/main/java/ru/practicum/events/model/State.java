@@ -4,20 +4,18 @@ public enum State {
     PENDING, PUBLISHED, CANCELED;
 
     public static State stringToState(String stringState) {
-        State state = State.PENDING;
-        try {
-            switch (StateAction.valueOf(stringState)) {
-                case PUBLISH_EVENT:
-                    state = State.PUBLISHED;
-                    break;
-                case CANCEL_REVIEW:
-                case REJECT_EVENT:
-                    state = State.CANCELED;
-                    break;
-            }
+        State state;
 
-        } catch (Exception ignored) {
-
+        switch (StateAction.valueOf(stringState)) {
+            case PUBLISH_EVENT:
+                state = State.PUBLISHED;
+                break;
+            case CANCEL_REVIEW:
+            case REJECT_EVENT:
+                state = State.CANCELED;
+                break;
+            default:
+                state = State.PENDING;
         }
 
         return state;

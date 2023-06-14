@@ -5,8 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.events.dto.EventFullDto;
+import ru.practicum.events.dto.EventRequestDto;
 import ru.practicum.events.dto.EventShortDto;
-import ru.practicum.events.dto.EventUserRequest;
 import ru.practicum.events.dto.NewEventDto;
 import ru.practicum.events.service.EventService;
 import ru.practicum.request.dto.EventRequestFullDto;
@@ -32,7 +32,7 @@ public class EventControllerPrivate {
     @PatchMapping("/{userId}/events/{eventId}")
     public EventFullDto updateEventUser(@PathVariable Long userId,
                                         @PathVariable Long eventId,
-                                        @Validated @RequestBody EventUserRequest eventDtoRequest) {
+                                        @Validated @RequestBody EventRequestDto eventDtoRequest) {
         return eventService.updateEventUser(userId, eventId, eventDtoRequest);
     }
 

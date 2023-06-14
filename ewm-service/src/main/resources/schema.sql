@@ -51,6 +51,7 @@ CREATE TABLE IF NOT EXISTS compilation
 
 CREATE TABLE IF NOT EXISTS compilation_events
 (
+    id             BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     compilation_id BIGINT REFERENCES compilation (id),
     events_id      BIGINT REFERENCES events (id)
 );

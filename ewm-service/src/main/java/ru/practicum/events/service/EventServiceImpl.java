@@ -44,7 +44,8 @@ public class EventServiceImpl implements EventService {
     private final StatClientMain client;
     private final RequestRepository requestRepository;
 
-    @Value("${app.name}") String appName;
+    @Value("${app.name}")
+    private String appName;
 
     @Override
     @Transactional
@@ -71,7 +72,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public EventFullDto updateEventUser(Long userId, Long eventId, EventUserRequest eventDto) {
+    public EventFullDto updateEventUser(Long userId, Long eventId, EventRequestDto eventDto) {
         if (eventDto.getEventDate() != null && eventDto.getEventDate().isBefore(LocalDateTime.now())) {
             throw new BadRequestException("Не корректная дата " + eventDto.getEventDate());
         }
@@ -80,13 +81,13 @@ public class EventServiceImpl implements EventService {
             throw new ObjectNotFoundException("Событие не найдено " + eventId);
         }
 
-        if (eventDto.getTitle() == null || eventDto.getTitle().isBlank()) {
+        if (eventDto.getTitle() != null && eventDto.getTitle().isBlank()) {
             throw new BadRequestException("Пустое название события");
         }
-        if (eventDto.getDescription() == null || eventDto.getDescription().isBlank()) {
+        if (eventDto.getDescription() != null && eventDto.getDescription().isBlank()) {
             throw new BadRequestException("Пустое описание события");
         }
-        if (eventDto.getAnnotation() == null || eventDto.getAnnotation().isBlank()) {
+        if (eventDto.getAnnotation() != null && eventDto.getAnnotation().isBlank()) {
             throw new BadRequestException("Пустая аннотация события");
         }
 
@@ -153,18 +154,18 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public EventFullDto updateEventAdmin(Long eventId, EventAdminRequest eventDtoRequest) {
+    public EventFullDto updateEventAdmin(Long eventId, EventRequestDto eventDtoRequest) {
         if (eventDtoRequest.getEventDate() != null && eventDtoRequest.getEventDate().isBefore(LocalDateTime.now().plusHours(1))) {
             throw new BadRequestException("Не корректная дата " + eventDtoRequest.getEventDate());
         }
 
-        if (eventDtoRequest.getTitle() == null || eventDtoRequest.getTitle().isBlank()) {
+        if (eventDtoRequest.getTitle() != null && eventDtoRequest.getTitle().isBlank()) {
             throw new BadRequestException("Пустое название события");
         }
-        if (eventDtoRequest.getDescription() == null || eventDtoRequest.getDescription().isBlank()) {
+        if (eventDtoRequest.getDescription() != null && eventDtoRequest.getDescription().isBlank()) {
             throw new BadRequestException("Пустое описание события");
         }
-        if (eventDtoRequest.getAnnotation() == null || eventDtoRequest.getAnnotation().isBlank()) {
+        if (eventDtoRequest.getAnnotation() != null && eventDtoRequest.getAnnotation().isBlank()) {
             throw new BadRequestException("Пустая аннотация события");
         }
 

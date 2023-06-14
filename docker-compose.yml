@@ -20,6 +20,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://main-db:5432/ewm
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
+      - APP_NAME=ExploreWithMe
 
   server:
     build: stat-service/server
