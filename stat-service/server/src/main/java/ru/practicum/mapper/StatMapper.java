@@ -1,5 +1,6 @@
 package ru.practicum.mapper;
 
+import lombok.experimental.UtilityClass;
 import ru.practicum.StatisticRequestDto;
 import ru.practicum.StatisticResponseDto;
 import ru.practicum.model.Stat;
@@ -7,8 +8,9 @@ import ru.practicum.model.Stat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+@UtilityClass
 public class StatMapper {
-    public static final DateTimeFormatter DATA_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    public final DateTimeFormatter DATA_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public static StatisticResponseDto toStatDto(Stat stat) {
         return StatisticResponseDto.builder()
@@ -17,7 +19,7 @@ public class StatMapper {
                 .build();
     }
 
-    public static Stat toStat(StatisticRequestDto statDto) {
+    public Stat toStat(StatisticRequestDto statDto) {
         return new Stat(
                 statDto.getId(),
                 statDto.getApp(),

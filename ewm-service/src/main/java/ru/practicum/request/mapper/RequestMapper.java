@@ -1,11 +1,13 @@
 package ru.practicum.request.mapper;
 
+import lombok.experimental.UtilityClass;
 import ru.practicum.request.dto.EventRequestFullDto;
 import ru.practicum.request.dto.ParticipationRequestDto;
 import ru.practicum.request.model.Request;
 
+@UtilityClass
 public class RequestMapper {
-    public static EventRequestFullDto toEventRequestDto(Request eventRequest) {
+    public EventRequestFullDto toEventRequestDto(Request eventRequest) {
         return EventRequestFullDto.builder()
                 .id(eventRequest.getId())
                 .event(eventRequest.getEvent().getId())
@@ -15,7 +17,7 @@ public class RequestMapper {
                 .build();
     }
 
-    public static ParticipationRequestDto toEventRequestDtoPart(Request eventRequest) {
+    public ParticipationRequestDto toEventRequestDtoPart(Request eventRequest) {
         return ParticipationRequestDto.builder()
                 .id(eventRequest.getId())
                 .event(eventRequest.getEvent().getId())

@@ -1,5 +1,6 @@
 package ru.practicum.compilation.mapper;
 
+import lombok.experimental.UtilityClass;
 import ru.practicum.compilation.dto.CompilationDto;
 import ru.practicum.compilation.dto.NewCompilationDto;
 import ru.practicum.compilation.model.Compilation;
@@ -9,8 +10,9 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@UtilityClass
 public class CompilationMapper {
-    public static CompilationDto toCompilationDto(Compilation compilation) {
+    public CompilationDto toCompilationDto(Compilation compilation) {
         return CompilationDto.builder()
                 .id(compilation.getId())
                 .title(compilation.getTitle())
@@ -21,7 +23,7 @@ public class CompilationMapper {
                 .build();
     }
 
-    public static Compilation toCompilation(Compilation compilation, NewCompilationDto newCompilationDto) {
+    public Compilation toCompilation(Compilation compilation, NewCompilationDto newCompilationDto) {
         compilation.setId(newCompilationDto.getId());
         Optional.ofNullable(newCompilationDto.getTitle()).ifPresent(compilation::setTitle);
         compilation.setPinned(newCompilationDto.isPinned());
