@@ -8,9 +8,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.statistic.dto.StatisticRequestDto;
+import ru.practicum.StatisticRequestDto;
 import ru.practicum.category.repository.CategoryRepository;
-import ru.practicum.client.StatisticClient;
+import ru.practicum.client.StatClientMain;
 import ru.practicum.events.dto.*;
 import ru.practicum.events.mapper.EventMapper;
 import ru.practicum.events.model.Event;
@@ -41,7 +41,7 @@ public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
-    private final StatisticClient client;
+    private final StatClientMain client;
     private final RequestRepository requestRepository;
 
     @Value("${app.name}")
@@ -206,7 +206,7 @@ public class EventServiceImpl implements EventService {
                 .ip(request.getRemoteAddr())
                 .uri(request.getRequestURI())
                 .timeStamp(LocalDateTime.now()).build();
-        client.createStat(statRequestDto);
+        client.createStatistic(statRequestDto);
         List<Event> events = eventRepository.findAll(getRequestParamForDb(userSearch), pageable).getContent();
         List<EventShortDto> eventShort = events.stream()
                 .map(event -> EventMapper.toEventShortDto(event))
@@ -235,7 +235,7 @@ public class EventServiceImpl implements EventService {
                 .ip(request.getRemoteAddr())
                 .uri(request.getRequestURI())
                 .timeStamp(LocalDateTime.now()).build();
-        client.createStat(statRequestDto);
+        client.createStatistic(statRequestDto);
 
         Optional<LocalDateTime> minPublishedDate = eventRepository.findMinPublishedDate();
 
