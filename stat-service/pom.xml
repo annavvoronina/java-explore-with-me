@@ -12,8 +12,6 @@
     <artifactId>stat-service</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>client</module>
-        <module>dto</module>
         <module>server</module>
     </modules>
 

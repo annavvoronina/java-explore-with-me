@@ -5,8 +5,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.StatisticRequestDto;
-import ru.practicum.StatisticResponseDto;
+import ru.practicum.dto.StatisticRequestDto;
+import ru.practicum.dto.StatisticResponseDto;
 import ru.practicum.exception.BadRequestException;
 import ru.practicum.service.StatService;
 
@@ -31,6 +31,14 @@ public class StatController {
                                               @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
                                               @RequestParam(name = "uris") List<String> uris,
                                               @RequestParam(name = "unique", defaultValue = "false") boolean unique) {
+        if (start == null) {
+            throw new BadRequestException("Дата начала не указана");
+        }
+
+        if (end == null) {
+            throw new BadRequestException("Дата конца не указана");
+        }
+
         if (start.isAfter(end)) {
             throw new BadRequestException("Дата начала не может быть позже даты окончания");
         }
