@@ -38,7 +38,7 @@ public class RequestController {
     @PatchMapping("/{userId}/events/{eventId}/requests")
     public EventRequestStatusUpdateResultDto updateRequestStatus(@PathVariable Long userId,
                                                                  @PathVariable Long eventId,
-                                                                 @Validated @RequestBody(required = false) EventRequestStatusUpdateRequest eventRequestStatusUpdateRequest) {
+                                                                 @Validated @RequestBody EventRequestStatusUpdateRequest eventRequestStatusUpdateRequest) {
         return requestService.updateRequestStatus(userId, eventId, eventRequestStatusUpdateRequest);
     }
 }

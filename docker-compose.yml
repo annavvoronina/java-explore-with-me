@@ -7,20 +7,20 @@ services:
     depends_on:
       - ewm-db
     environment:
-      - STAT_SERVER_URL=http://stats-server:9090
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://main-db:5432/ewm
+      - STAT_SERVER_URL=http://stat-service:9090
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewm
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
       - APP_NAME=ExploreWithMe
 
-  server:
+  stat-service:
     build: stat-service
     ports:
-      - "8081:8081"
+      - "9090:9090"
     depends_on:
       - stats-db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/ewm-stats
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/ewm-stats
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
 
