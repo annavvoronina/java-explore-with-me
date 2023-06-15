@@ -11,7 +11,7 @@
 
     <artifactId>stat-service</artifactId>
     <packaging>jar</packaging>
-    <name>stat-service</name>
+    <name>server</name>
     <url>http://maven.apache.org</url>
 
     <properties>
