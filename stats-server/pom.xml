@@ -9,9 +9,8 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>stat-service</artifactId>
+    <artifactId>stats-server</artifactId>
     <packaging>jar</packaging>
-    <name>server</name>
     <url>http://maven.apache.org</url>
 
     <properties>
