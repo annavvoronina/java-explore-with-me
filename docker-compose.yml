@@ -14,7 +14,7 @@ services:
       - APP_NAME=ExploreWithMe
 
   stats-server:
-    build: stats-server
+    build: stat-service
     ports:
       - "9090:9090"
     depends_on:
