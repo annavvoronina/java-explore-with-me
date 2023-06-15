@@ -5,8 +5,10 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -41,8 +43,28 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(BAD_REQUEST)
+    public ErrorResponse notCorrectState(final MissingServletRequestParameterException exception) {
+        log.debug("Получен статус 400 Bad Request");
+        log.debug(exception.getMessage());
+        log.debug(stringWriter.toString());
+
+        return new ErrorResponse(exception.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(BAD_REQUEST)
     public ErrorResponse notCorrectState(final BadRequestException exception) {
         log.debug("Получен статус 400 Bad Request");
+        log.debug(exception.getMessage());
+        log.debug(stringWriter.toString());
+
+        return new ErrorResponse(exception.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(CONFLICT)
+    public ErrorResponse notCorrectState(final HttpMessageNotReadableException exception) {
+        log.debug("Получен статус 409 Conflict");
         log.debug(exception.getMessage());
         log.debug(stringWriter.toString());
 
@@ -127,6 +149,6 @@ public class ErrorHandler {
         log.debug(exception.getMessage());
         log.debug(stringWriter.toString());
 
-        return new ErrorResponse(exception.getMessage());
+        return new ErrorResponse(exception.getClass() + ": " + exception.getMessage());
     }
 }

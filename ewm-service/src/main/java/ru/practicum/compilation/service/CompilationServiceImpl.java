@@ -30,8 +30,8 @@ public class CompilationServiceImpl implements CompilationService {
     @Transactional
     public CompilationDto createCompilation(NewCompilationDto newCompilationDto) {
         Compilation compilation = CompilationMapper.toCompilation(new Compilation(), newCompilationDto);
-        if (newCompilationDto.getTitle() != null && !newCompilationDto.getTitle().isBlank()) {
-            throw new BadRequestException("Слишком длинное название подборки");
+        if (newCompilationDto.getTitle() == null || newCompilationDto.getTitle().isBlank()) {
+            throw new BadRequestException("Пустое название подборки");
         }
         if (newCompilationDto.getEvents() != null) {
             compilation.setEvents(new HashSet<>(eventRepository.findAllByIdIn(newCompilationDto.getEvents())));
@@ -50,8 +50,8 @@ public class CompilationServiceImpl implements CompilationService {
         if (!compilationOptional.isPresent()) {
             throw new ObjectNotFoundException("Подборка не найдена " + id);
         }
-        if (newCompilationDto.getTitle() != null && newCompilationDto.getTitle().length() > 50) {
-            throw new BadRequestException("Слишком длинное название подборки");
+        if (newCompilationDto.getTitle() != null && newCompilationDto.getTitle().isBlank()) {
+            throw new BadRequestException("Пустое название подборки");
         }
 
         var compilation = compilationOptional.get();

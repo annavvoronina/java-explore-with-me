@@ -15,6 +15,6 @@ public class NewCompilationDto {
     private List<Long> events;
     private boolean pinned;
     @Size(min = 20, message = "минимальная длина 20 символов")
-    @Size(max = 255, message = "максимальная длина 255 символов")
+    @Size(max = 50, message = "максимальная длина 50 символов")
     private String title;
 }

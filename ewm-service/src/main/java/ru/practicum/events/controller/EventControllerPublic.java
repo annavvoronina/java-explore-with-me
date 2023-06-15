@@ -30,8 +30,8 @@ public class EventControllerPublic {
                                                   @RequestParam(required = false) String rangeStart,
                                                   @RequestParam(required = false) String rangeEnd,
                                                   @RequestParam(name = "sort", defaultValue = "EVENT_DATE") String sort,
-                                                  @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
-                                                  @Positive @RequestParam(name = "size", defaultValue = "10") Integer size,
+                                                  @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") int from,
+                                                  @Positive @RequestParam(name = "size", defaultValue = "10") int size,
                                                   HttpServletRequest request) {
         UserSearchDto param = ParamMapper.toUserSearch(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort);
 

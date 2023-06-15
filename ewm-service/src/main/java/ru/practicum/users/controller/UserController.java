@@ -22,8 +22,8 @@ public class UserController {
 
     @GetMapping
     public List<UserDto> getUsers(@Nullable @RequestParam(name = "ids") Long[] ids,
-                                  @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
-                                  @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
+                                  @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") int from,
+                                  @Positive @RequestParam(name = "size", defaultValue = "10") int size) {
         Long[] idsParam = ids == null ? new Long[]{} : ids;
 
         return userService.getUsers(idsParam, from, size);

@@ -237,8 +237,11 @@ public class EventServiceImpl implements EventService {
                 .timeStamp(LocalDateTime.now()).build();
         client.createStatistic(statRequestDto);
 
+        Optional<LocalDateTime> minPublishedDate = eventRepository.findMinPublishedDate();
+
         ResponseEntity<Object> existingStat = client.getStat(
-                LocalDateTime.now().minusYears(1).format(EventMapper.DATE_TIME_FORMATTER),
+                minPublishedDate.map(localDateTime -> localDateTime.format(EventMapper.DATE_TIME_FORMATTER))
+                        .orElseGet(() -> LocalDateTime.now().format(EventMapper.DATE_TIME_FORMATTER)),
                 LocalDateTime.now().format(EventMapper.DATE_TIME_FORMATTER),
                 new String[]{request.getRequestURI()},
                 true

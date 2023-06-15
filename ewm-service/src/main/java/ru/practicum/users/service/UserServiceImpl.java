@@ -21,17 +21,17 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository repository;
+    private final UserRepository userRepository;
 
     @Transactional
     @Override
     public UserDto createUser(NewUserRequest newUser) {
-        User existingUser = repository.findByEmail(newUser.getEmail());
-        if (existingUser != null) {
+        Boolean userExists = userRepository.existsByEmail(newUser.getEmail());
+        if (userExists) {
             throw new ConflictException("Пользователь с таким email уже существует");
         }
 
-        User createdUser = repository.save(UserMapper.toUser(newUser));
+        User createdUser = userRepository.save(UserMapper.toUser(newUser));
         return UserMapper.toUserDto(createdUser);
     }
 
@@ -39,9 +39,9 @@ public class UserServiceImpl implements UserService {
     public List<UserDto> getUsers(Long[] ids, int from, int size) {
         Pageable pageable = PageRequest.of(from / size, size);
         if (ids != null && ids.length > 0) {
-            return UserMapper.toListDto(repository.findUsersByIdIn(Arrays.asList(ids)));
+            return UserMapper.toListDto(userRepository.findUsersByIdIn(Arrays.asList(ids)));
         } else {
-            return UserMapper.toListDto(repository.findAll(pageable).getContent());
+            return UserMapper.toListDto(userRepository.findAll(pageable).getContent());
         }
     }
 
@@ -49,12 +49,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public void removeUser(Long id) {
         getById(id);
-        repository.deleteById(id);
+        userRepository.deleteById(id);
     }
 
     @Override
     public UserDto getById(Long id) {
-        User user = repository.findById(id)
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Пользователь не найден " + id));
         return UserMapper.toUserDto(user);
     }

@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
-public class ValidationErrorException {
+public class ValidationErrorHandler {
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ValidationErrorResponse onConstraintValidationException(ConstraintViolationException e) {

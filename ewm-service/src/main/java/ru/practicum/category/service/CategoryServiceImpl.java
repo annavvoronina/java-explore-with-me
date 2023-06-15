@@ -27,9 +27,9 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     @Override
     public CategoryDto createCategory(NewCategoryDto newCategoryDto) {
-        Category existingCategory = categoryRepository.findByName(newCategoryDto.getName());
+        Boolean categoryExists = categoryRepository.existsByName(newCategoryDto.getName());
 
-        if (existingCategory != null) {
+        if (categoryExists) {
             throw new ConflictException("Категория с таким именем уже существует");
         }
 
@@ -51,11 +51,11 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public void deleteCategory(Long id) {
         getCategoryById(id);
-        Optional<Boolean> eventExists = eventRepository.existsByCategoryId(id);
-        if (eventExists.orElse(false)) {
+        Boolean eventExists = eventRepository.existsByCategoryId(id);
+        if (!eventExists) {
             categoryRepository.deleteById(id);
         } else {
-            throw new ConflictException("У категории " + id + "есть события");
+            throw new ConflictException("У категории " + id + " есть события");
         }
     }
 
