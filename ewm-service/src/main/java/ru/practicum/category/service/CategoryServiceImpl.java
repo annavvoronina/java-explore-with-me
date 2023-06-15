@@ -15,7 +15,6 @@ import ru.practicum.exception.ConflictException;
 import ru.practicum.exception.ObjectNotFoundException;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
