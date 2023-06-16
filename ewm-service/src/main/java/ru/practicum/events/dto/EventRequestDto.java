@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import ru.practicum.events.model.Location;
 import ru.practicum.events.model.StateAction;
 
-import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
@@ -26,7 +25,6 @@ public class EventRequestDto {
     private LocalDateTime eventDate;
     private Location location;
     private Boolean paid;
-    @PositiveOrZero
     private Long participantLimit;
     private Boolean requestModeration;
     private StateAction stateAction;
