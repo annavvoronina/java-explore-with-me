@@ -33,7 +33,6 @@ public class NewEventDto {
     private LocalDateTime eventDate;
     private Location location;
     private boolean paid;
-    @NotNull
     @PositiveOrZero
     private Long participantLimit;
     private boolean requestModeration = true;
