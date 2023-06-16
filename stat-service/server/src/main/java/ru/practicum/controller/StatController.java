@@ -31,14 +31,6 @@ public class StatController {
                                               @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
                                               @RequestParam(name = "uris") List<String> uris,
                                               @RequestParam(name = "unique", defaultValue = "false") boolean unique) {
-        if (start == null) {
-            throw new BadRequestException("Дата начала не указана");
-        }
-
-        if (end == null) {
-            throw new BadRequestException("Дата конца не указана");
-        }
-
         if (start.isAfter(end)) {
             throw new BadRequestException("Дата начала не может быть позже даты окончания");
         }

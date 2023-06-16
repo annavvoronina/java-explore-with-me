@@ -30,14 +30,8 @@ public class CompilationServiceImpl implements CompilationService {
     @Transactional
     public CompilationDto createCompilation(NewCompilationDto newCompilationDto) {
         Compilation compilation = CompilationMapper.toCompilation(new Compilation(), newCompilationDto);
-        if (newCompilationDto.getTitle() == null || newCompilationDto.getTitle().isBlank()) {
-            throw new BadRequestException("Пустое название подборки");
-        }
         if (newCompilationDto.getEvents() != null) {
             compilation.setEvents(new HashSet<>(eventRepository.findAllByIdIn(newCompilationDto.getEvents())));
-        }
-        if (compilation.getPinned() == null) {
-            compilation.setPinned(false);
         }
         Compilation createdCompilation = repository.save(compilation);
         return CompilationMapper.toCompilationDto(createdCompilation);

@@ -25,6 +25,7 @@ public class EventRequestDto {
     private LocalDateTime eventDate;
     private Location location;
     private Boolean paid;
+    @PositiveOrZero
     private Long participantLimit;
     private Boolean requestModeration;
     private StateAction stateAction;
