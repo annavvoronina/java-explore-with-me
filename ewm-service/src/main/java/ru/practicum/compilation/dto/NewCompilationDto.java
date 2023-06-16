@@ -2,7 +2,6 @@ package ru.practicum.compilation.dto;
 
 import lombok.*;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.List;
 
@@ -15,7 +14,6 @@ public class NewCompilationDto {
     private Long id;
     private List<Long> events;
     private boolean pinned;
-    @NotBlank
     @Size(min = 20, message = "минимальная длина 20 символов")
     @Size(max = 50, message = "максимальная длина 50 символов")
     private String title;
