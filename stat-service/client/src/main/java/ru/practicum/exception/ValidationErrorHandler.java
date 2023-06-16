@@ -29,4 +29,10 @@ public class ValidationErrorHandler {
                 .collect(Collectors.toList());
         return new ValidationErrorResponse(violations);
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse notCorrectState(Throwable exception) {
+        return new ErrorResponse(exception.getClass() + ": " + exception.getMessage());
+    }
 }

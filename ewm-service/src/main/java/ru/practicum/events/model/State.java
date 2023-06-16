@@ -7,18 +7,8 @@ public enum State {
         State state;
 
         try {
-            switch (StateAction.valueOf(stringState)) {
-                case PUBLISH_EVENT:
-                    state = State.PUBLISHED;
-                    break;
-                case CANCEL_REVIEW:
-                case REJECT_EVENT:
-                    state = State.CANCELED;
-                    break;
-                default:
-                    state = State.PENDING;
-            }
-        } catch (Exception exception) {
+            state = State.valueOf(stringState);
+        } catch (IllegalArgumentException exception) {
             state = State.PENDING;
         }
 

@@ -1,6 +1,7 @@
 package ru.practicum.users.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -26,12 +27,14 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public UserDto createUser(NewUserRequest newUser) {
-        Boolean userExists = userRepository.existsByEmail(newUser.getEmail());
-        if (userExists) {
+        User createdUser;
+
+        try {
+            createdUser = userRepository.save(UserMapper.toUser(newUser));
+        } catch (DataIntegrityViolationException exception) {
             throw new ConflictException("Пользователь с таким email уже существует");
         }
 
-        User createdUser = userRepository.save(UserMapper.toUser(newUser));
         return UserMapper.toUserDto(createdUser);
     }
 

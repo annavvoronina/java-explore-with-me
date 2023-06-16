@@ -19,8 +19,8 @@ public class StatController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/hit")
-    public ResponseEntity<Object> createQuery(@RequestBody StatisticRequestDto statisticRequestDto) {
-        return statisticClient.createQuery(statisticRequestDto);
+    public ResponseEntity<Object> createStat(@RequestBody StatisticRequestDto statisticRequestDto) {
+        return statisticClient.createStat(statisticRequestDto);
     }
 
     @GetMapping("/stats")

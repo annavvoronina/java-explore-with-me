@@ -5,13 +5,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.StatisticRequestDto;
 
 import java.util.Map;
 
-@Service
+@Component
 public class StatisticClient extends BaseClient {
     private static final String API_PREFIX = "";
 
@@ -25,17 +25,18 @@ public class StatisticClient extends BaseClient {
         );
     }
 
-    public ResponseEntity<Object> createQuery(StatisticRequestDto statisticRequestDto) {
-        return post("/hit", statisticRequestDto);
+    public ResponseEntity<Object> createStat(StatisticRequestDto statRequestDto) {
+        return post("/hit", statRequestDto);
     }
 
     public ResponseEntity<Object> getStat(String start, String end, String[] uris, boolean unique) {
         Map<String, Object> parameters = Map.of(
                 "start", start,
                 "end", end,
-                "uris", uris,
+                "uris", String.join(",", uris),
                 "unique", unique
         );
+
         return get("/stats?start={start}&end={end}&uris={uris}&unique={unique}", parameters);
     }
 }

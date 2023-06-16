@@ -44,9 +44,6 @@ public class CompilationServiceImpl implements CompilationService {
         if (!compilationOptional.isPresent()) {
             throw new ObjectNotFoundException("Подборка не найдена " + id);
         }
-        if (newCompilationDto.getTitle() != null && newCompilationDto.getTitle().isBlank()) {
-            throw new BadRequestException("Пустое название подборки");
-        }
 
         var compilation = compilationOptional.get();
         CompilationMapper.toCompilation(compilation, newCompilationDto);

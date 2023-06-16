@@ -16,6 +16,7 @@ import org.springframework.web.context.request.ServletWebRequest;
 
 import javax.validation.ConstraintViolationException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -25,18 +26,10 @@ import static org.springframework.http.HttpStatus.*;
 @Slf4j
 @RestControllerAdvice
 public class ErrorHandler {
-    StringWriter stringWriter;
-
-    ErrorHandler() {
-        stringWriter = new StringWriter();
-    }
-
     @ExceptionHandler
     @ResponseStatus(BAD_REQUEST)
     public ErrorResponse notCorrectState(final java.lang.IllegalStateException exception) {
-        log.debug("Получен статус 400 Bad Request");
-        log.debug(exception.getMessage());
-        log.debug(stringWriter.toString());
+        logError("Получен статус 400 Bad Request", exception);
 
         return new ErrorResponse(exception.getMessage());
     }
@@ -44,9 +37,7 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(BAD_REQUEST)
     public ErrorResponse notCorrectState(final MissingServletRequestParameterException exception) {
-        log.debug("Получен статус 400 Bad Request");
-        log.debug(exception.getMessage());
-        log.debug(stringWriter.toString());
+        logError("Получен статус 400 Bad Request", exception);
 
         return new ErrorResponse(exception.getMessage());
     }
@@ -54,9 +45,7 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(BAD_REQUEST)
     public ErrorResponse notCorrectState(final BadRequestException exception) {
-        log.debug("Получен статус 400 Bad Request");
-        log.debug(exception.getMessage());
-        log.debug(stringWriter.toString());
+        logError("Получен статус 400 Bad Request", exception);
 
         return new ErrorResponse(exception.getMessage());
     }
@@ -64,9 +53,7 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(CONFLICT)
     public ErrorResponse notCorrectState(final HttpMessageNotReadableException exception) {
-        log.debug("Получен статус 409 Conflict");
-        log.debug(exception.getMessage());
-        log.debug(stringWriter.toString());
+        logError("Получен статус 409 Conflict", exception);
 
         return new ErrorResponse(exception.getMessage());
     }
@@ -74,18 +61,14 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(CONFLICT)
     public ErrorResponse notCorrectState(final ConflictException exception) {
-        log.debug("Получен статус 409 Conflict");
-        log.debug(exception.getMessage());
-        log.debug(stringWriter.toString());
+        logError("Получен статус 409 Conflict", exception);
 
         return new ErrorResponse(exception.getMessage());
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String, String>> handleIllegalArgumentException(IllegalArgumentException exception) {
-        log.debug("Получен статус 400 Bad Request");
-        log.debug(exception.getMessage());
-        log.debug(stringWriter.toString());
+        logError("Получен статус 400 Bad Request", exception);
 
         return new ResponseEntity<>(
                 Map.of("error", exception.getMessage()),
@@ -96,9 +79,7 @@ public class ErrorHandler {
     @ResponseStatus(BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Object> methodArgumentNotValidException(MethodArgumentNotValidException exception) {
-        log.debug("Получен статус 400 Bad Request");
-        log.debug(exception.getMessage());
-        log.debug(stringWriter.toString());
+        logError("Получен статус 400 Bad Request", exception);
 
         BindingResult result = exception.getBindingResult();
         ApiError apiError = ApiError.builder()
@@ -115,9 +96,7 @@ public class ErrorHandler {
     @ExceptionHandler(ObjectNotFoundException.class)
     public void handleValidationException(ObjectNotFoundException exception,
                                           ServletWebRequest webRequest) throws IOException {
-        log.debug("Получен статус 404 Not Found");
-        log.debug(exception.getMessage());
-        log.debug(stringWriter.toString());
+        logError("Получен статус 404 Not Found", exception);
 
         webRequest.getResponse().sendError(HttpStatus.NOT_FOUND.value(), exception.getMessage());
     }
@@ -125,9 +104,7 @@ public class ErrorHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     public void handleConstraintViolationException(DataIntegrityViolationException exception,
                                                    ServletWebRequest webRequest) throws IOException {
-        log.debug("Получен статус 409 Conflict");
-        log.debug(exception.getMessage());
-        log.debug(stringWriter.toString());
+        logError("Получен статус 409 Conflict", exception);
 
         webRequest.getResponse().sendError(CONFLICT.value(), exception.getMessage());
     }
@@ -135,9 +112,7 @@ public class ErrorHandler {
     @ExceptionHandler(ConstraintViolationException.class)
     public void handleConstraintViolationException(ConstraintViolationException exception,
                                                    ServletWebRequest webRequest) throws IOException {
-        log.debug("Получен статус 400 Bad Request");
-        log.debug(exception.getMessage());
-        log.debug(stringWriter.toString());
+        logError("Получен статус 400 Bad Request", exception);
 
         webRequest.getResponse().sendError(BAD_REQUEST.value(), exception.getMessage());
     }
@@ -145,10 +120,18 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(INTERNAL_SERVER_ERROR)
     public ErrorResponse notCorrectState(final Throwable exception) {
-        log.debug("Получен статус 500 Internal Server Error");
-        log.debug(exception.getMessage());
-        log.debug(stringWriter.toString());
+        logError("Получен статус 500 Internal Server Error", exception);
 
         return new ErrorResponse(exception.getClass() + ": " + exception.getMessage());
+    }
+
+    private void logError(String comment, Throwable exception) {
+        log.debug(comment);
+        log.debug(exception.getMessage());
+
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(stringWriter);
+        exception.printStackTrace(printWriter);
+        log.debug(stringWriter.toString());
     }
 }

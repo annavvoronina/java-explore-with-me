@@ -120,14 +120,18 @@ public class RequestServiceImpl implements RequestService {
             throw new ConflictException("Список запросов не передан");
         }
 
-        var result = requestRepository.findEventRequestsByIdInAndEventIs(eventRequestStatusUpdateRequest.getRequestIds(), event);
-        if (result.size() == 0) {
+        List<Request> eventRequestList = requestRepository.findEventRequestsByIdInAndEventIs(
+                eventRequestStatusUpdateRequest.getRequestIds(),
+                event
+        );
+        if (eventRequestList.size() == 0) {
             return eventRequestListDto;
         }
-        result.forEach(eventRequest -> {
+
+        eventRequestList.forEach(eventRequest -> {
             eventRequest.setStatus(eventRequestStatusUpdateRequest.getStatus());
-            requestRepository.save(eventRequest);
         });
+        requestRepository.saveAll(eventRequestList);
 
         if (eventRequestStatusUpdateRequest.getStatus() == RequestStatus.CONFIRMED) {
             event.setConfirmedRequests(event.getConfirmedRequests() != null ? event.getConfirmedRequests() + 1 : 1);

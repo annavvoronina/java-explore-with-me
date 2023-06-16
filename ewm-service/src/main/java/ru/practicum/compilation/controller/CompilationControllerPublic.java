@@ -14,7 +14,7 @@ public class CompilationControllerPublic {
     private final CompilationService compilationService;
 
     @GetMapping
-    public List<CompilationDto> getCompilations(@RequestParam(name = "pinned", required = false) boolean pinned,
+    public List<CompilationDto> getCompilations(@RequestParam(name = "pinned", required = false) Boolean pinned,
                                                 @RequestParam(name = "from", defaultValue = "0") int from,
                                                 @RequestParam(name = "size", defaultValue = "10") int size) {
         return compilationService.getCompilations(pinned, from, size);
