@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS request
     event_id     BIGINT REFERENCES events (id),
     requester_id BIGINT REFERENCES users (id),
     created      TIMESTAMP WITHOUT TIME ZONE,
-    state        varchar(255)
+    status        varchar(255)
 );
 
 CREATE TABLE IF NOT EXISTS compilation

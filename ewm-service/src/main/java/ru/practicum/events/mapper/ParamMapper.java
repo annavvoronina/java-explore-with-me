@@ -6,7 +6,6 @@ import ru.practicum.events.model.Sort;
 import ru.practicum.events.model.State;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class ParamMapper {
