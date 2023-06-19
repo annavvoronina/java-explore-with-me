@@ -23,6 +23,6 @@ public class Compilation {
     private Set<Event> events;
     @Column(name = "pinned", nullable = false)
     private Boolean pinned;
-    @Column(name = "title", nullable = false, length = 2000)
+    @Column(name = "title", nullable = false, length = 50)
     private String title;
 }

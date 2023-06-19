@@ -13,7 +13,7 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
 
     List<Request> findEventRequestsByRequester(User requester);
 
-    Request findAEventRequestByIdIsAndRequesterIs(Long requestId, User requester);
+    Request findEventRequestByIdIsAndRequesterIs(Long requestId, User requester);
 
     Optional<Request> findByRequesterIdAndEventId(Long userId, Long eventId);
 

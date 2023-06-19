@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.category.model.Category;
 import ru.practicum.statistic.dto.StatisticRequestDto;
 import ru.practicum.category.repository.CategoryRepository;
 import ru.practicum.client.StatisticClient;
@@ -24,6 +25,7 @@ import ru.practicum.exception.ObjectNotFoundException;
 import ru.practicum.request.dto.EventRequestFullDto;
 import ru.practicum.request.mapper.RequestMapper;
 import ru.practicum.request.repository.RequestRepository;
+import ru.practicum.users.model.User;
 import ru.practicum.users.repository.UserRepository;
 
 import javax.servlet.http.HttpServletRequest;
@@ -51,20 +53,20 @@ public class EventServiceImpl implements EventService {
     @Transactional
     public EventFullDto createEvent(NewEventDto newEventDto, Long userId) {
         if (newEventDto.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
-            throw new BadRequestException("Не корректная дата " + newEventDto.getEventDate());
+            throw new BadRequestException("Некорректная дата " + newEventDto.getEventDate());
         }
         if (newEventDto.getParticipantLimit() == null) {
             long participantLimitDefault = 0;
             newEventDto.setParticipantLimit(participantLimitDefault);
         }
         Event event = EventMapper.toEvent(newEventDto);
-        var initiator = userRepository.findById(userId);
+        Optional<User> initiator = userRepository.findById(userId);
         if (initiator.isEmpty()) {
             throw new ObjectNotFoundException("Пользователь не найден " + userId);
         } else {
             event.setInitiator(initiator.get());
         }
-        var category = categoryRepository.findById(newEventDto.getCategory());
+        Optional<Category> category = categoryRepository.findById(newEventDto.getCategory());
         category.ifPresent(event::setCategory);
         Event createdEvent = eventRepository.save(event);
         return EventMapper.toEventFullDto(createdEvent);
@@ -74,9 +76,9 @@ public class EventServiceImpl implements EventService {
     @Transactional
     public EventFullDto updateEventUser(Long userId, Long eventId, EventRequestDto eventDto) {
         if (eventDto.getEventDate() != null && eventDto.getEventDate().isBefore(LocalDateTime.now())) {
-            throw new BadRequestException("Не корректная дата " + eventDto.getEventDate());
+            throw new BadRequestException("Некорректная дата " + eventDto.getEventDate());
         }
-        var eventPresent = eventRepository.findById(eventId);
+        Optional<Event> eventPresent = eventRepository.findById(eventId);
         if (eventPresent.isEmpty()) {
             throw new ObjectNotFoundException("Событие не найдено " + eventId);
         }
@@ -91,7 +93,7 @@ public class EventServiceImpl implements EventService {
             throw new BadRequestException("Пустая аннотация события");
         }
 
-        var event = eventPresent.get();
+        Event event = eventPresent.get();
         if (!event.getInitiator().getId().equals(userId)) {
             throw new ObjectNotFoundException("Пользователь не найден " + userId);
         }
@@ -109,7 +111,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public List<EventShortDto> getAllByUserId(Long userId, int from, int size) {
         Pageable pageable = PageRequest.of(from / size, size);
-        var initiator = userRepository.findById(userId);
+        Optional<User> initiator = userRepository.findById(userId);
         if (initiator.isEmpty()) {
             throw new ObjectNotFoundException("Пользователь не найден " + userId);
         } else {
@@ -122,7 +124,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventFullDto getAllByUserIdAndEventId(Long userId, Long eventId) {
-        var initiator = userRepository.findById(userId);
+        Optional<User> initiator = userRepository.findById(userId);
         if (initiator.isEmpty()) {
             throw new ObjectNotFoundException("Пользователь не найден " + userId);
         } else {
@@ -132,11 +134,11 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<EventRequestFullDto> getAllRequests(Long userId, Long eventId) {
-        var initiator = userRepository.findById(userId);
+        Optional<User> initiator = userRepository.findById(userId);
         if (initiator.isEmpty()) {
             throw new ObjectNotFoundException("Пользователь не найден " + userId);
         }
-        var event = eventRepository.findByInitiatorAndId(initiator.get(), eventId);
+        Optional<Event> event = eventRepository.findByInitiatorAndId(initiator.get(), eventId);
         if (event.isEmpty()) {
             throw new ObjectNotFoundException("Событие не найдено" + eventId);
         }
@@ -156,7 +158,7 @@ public class EventServiceImpl implements EventService {
     @Transactional
     public EventFullDto updateEventAdmin(Long eventId, EventRequestDto eventDtoRequest) {
         if (eventDtoRequest.getEventDate() != null && eventDtoRequest.getEventDate().isBefore(LocalDateTime.now().plusHours(1))) {
-            throw new BadRequestException("Не корректная дата " + eventDtoRequest.getEventDate());
+            throw new BadRequestException("Некорректная дата " + eventDtoRequest.getEventDate());
         }
 
         if (eventDtoRequest.getTitle() != null && eventDtoRequest.getTitle().isBlank()) {
@@ -169,22 +171,22 @@ public class EventServiceImpl implements EventService {
             throw new BadRequestException("Пустая аннотация события");
         }
 
-        var eventOptional = eventRepository.findById(eventId);
+        Optional<Event> eventOptional = eventRepository.findById(eventId);
         if (eventOptional.isEmpty()) {
             throw new ObjectNotFoundException(String.format("Событие не найдено " + eventId));
         }
-        var event = eventOptional.get();
+        Event event = eventOptional.get();
         if (eventDtoRequest.getStateAction() != null) {
             if (State.stringToState(String.valueOf(eventDtoRequest.getStateAction())) == event.getState()) {
-                throw new ConflictException("Не корректный статус " + eventDtoRequest.getStateAction());
+                throw new ConflictException("Некорректный статус " + eventDtoRequest.getStateAction());
             }
             if (StateAction.stringToStateAction(String.valueOf(eventDtoRequest.getStateAction())) == StateAction.PUBLISH_EVENT
                     && event.getState() == State.CANCELED) {
-                throw new ConflictException("Не корректный статус " + eventDtoRequest.getStateAction());
+                throw new ConflictException("Некорректный статус " + eventDtoRequest.getStateAction());
             }
             if (StateAction.stringToStateAction(String.valueOf(eventDtoRequest.getStateAction())) == StateAction.REJECT_EVENT
                     && event.getState() == State.PUBLISHED) {
-                throw new ConflictException("Не корректный статус " + eventDtoRequest.getStateAction());
+                throw new ConflictException("Некорректный статус " + eventDtoRequest.getStateAction());
             }
         }
         EventMapper.toEvent(event, eventDtoRequest);

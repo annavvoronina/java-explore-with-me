@@ -3,6 +3,7 @@ package ru.practicum.request.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.events.model.Event;
 import ru.practicum.events.model.State;
 import ru.practicum.events.repository.EventRepository;
 import ru.practicum.exception.ConflictException;
@@ -14,6 +15,7 @@ import ru.practicum.request.mapper.RequestMapper;
 import ru.practicum.request.model.Request;
 import ru.practicum.request.model.RequestStatus;
 import ru.practicum.request.repository.RequestRepository;
+import ru.practicum.users.model.User;
 import ru.practicum.users.repository.UserRepository;
 
 import java.time.LocalDateTime;
@@ -35,12 +37,12 @@ public class RequestServiceImpl implements RequestService {
     public EventRequestFullDto createRequest(Long userId, Long eventId) {
         Request eventRequest = new Request();
         eventRequest.setCreated(LocalDateTime.now().withNano(0));
-        var requester = userRepository.findById(userId)
+        User requester = userRepository.findById(userId)
                 .orElseThrow(() -> new ObjectNotFoundException("Пользователь не найден " + userId));
-        var event = eventRepository.findById(eventId)
+        Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new ObjectNotFoundException("Событие не найдено " + eventId));
         if (Objects.equals(event.getInitiator().getId(), userId)) {
-            throw new ConflictException("Не корректный инициатор " + event.getInitiator().getId());
+            throw new ConflictException("Некорректный инициатор " + event.getInitiator().getId());
         }
         Optional<Request> request = requestRepository.findByRequesterIdAndEventId(userId, eventId);
         if (request.isPresent()) {
@@ -53,7 +55,7 @@ public class RequestServiceImpl implements RequestService {
         }
 
         if (event.getState() != State.PUBLISHED) {
-            throw new ConflictException("Не корректный статус " + event.getState());
+            throw new ConflictException("Некорректный статус " + event.getState());
         }
 
         if (event.getParticipantLimit() == 0) {
@@ -71,7 +73,7 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public List<EventRequestFullDto> getRequest(Long userId) {
-        var requester = userRepository.findById(userId);
+        Optional<User> requester = userRepository.findById(userId);
         if (requester.isEmpty()) {
             throw new ObjectNotFoundException("Пользователь не найден " + userId);
         } else {
@@ -85,15 +87,20 @@ public class RequestServiceImpl implements RequestService {
     @Override
     @Transactional
     public EventRequestFullDto updateCancel(Long userId, Long requestId) {
-        var requester = userRepository.findById(userId);
+        Optional<User> requester = userRepository.findById(userId);
         if (requester.isEmpty()) {
             throw new ObjectNotFoundException("Пользователь не найден " + userId);
         }
-        var result = requestRepository.findAEventRequestByIdIsAndRequesterIs(requestId, requester.get());
-        result.setStatus(RequestStatus.CANCELED);
-        var updated = requestRepository.save(result);
-        return RequestMapper.toEventRequestDto(updated);
 
+        Request request = requestRepository.findEventRequestByIdIsAndRequesterIs(requestId, requester.get());
+        if (request == null) {
+            throw new ObjectNotFoundException("Запрос не найден " + userId);
+        }
+
+        request.setStatus(RequestStatus.CANCELED);
+        Request updatedRequest = requestRepository.save(request);
+
+        return RequestMapper.toEventRequestDto(updatedRequest);
     }
 
     @Override
@@ -102,15 +109,15 @@ public class RequestServiceImpl implements RequestService {
                                                                  Long eventId,
                                                                  EventRequestStatusUpdateRequest eventRequestStatusUpdateRequest) {
         EventRequestStatusUpdateResultDto eventRequestListDto = new EventRequestStatusUpdateResultDto();
-        var requester = userRepository.findById(userId);
+        Optional<User> requester = userRepository.findById(userId);
         if (requester.isEmpty()) {
             throw new ObjectNotFoundException("Пользователь не найден " + userId);
         }
-        var eventOptional = eventRepository.findByInitiatorAndId(requester.get(), eventId);
+        Optional<Event> eventOptional = eventRepository.findByInitiatorAndId(requester.get(), eventId);
         if (eventOptional.isEmpty()) {
             throw new ObjectNotFoundException("Событие не найдено " + eventId);
         }
-        var event = eventOptional.get();
+        Event event = eventOptional.get();
         List<Request> requestList = requestRepository.findAllEventRequestsByEventIs(event);
         if (event.getParticipantLimit() > 0 && requestList.size() >= event.getParticipantLimit()) {
             throw new ConflictException("Превышен лимит участников");
@@ -128,9 +135,7 @@ public class RequestServiceImpl implements RequestService {
             return eventRequestListDto;
         }
 
-        eventRequestList.forEach(eventRequest -> {
-            eventRequest.setStatus(eventRequestStatusUpdateRequest.getStatus());
-        });
+        eventRequestList.forEach(eventRequest -> eventRequest.setStatus(eventRequestStatusUpdateRequest.getStatus()));
         requestRepository.saveAll(eventRequestList);
 
         if (eventRequestStatusUpdateRequest.getStatus() == RequestStatus.CONFIRMED) {
