@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
         try {
             createdUser = userRepository.save(UserMapper.toUser(newUser));
         } catch (DataIntegrityViolationException exception) {
-            throw new ConflictException("Пользователь с таким email уже существует"+ exception.getMessage());
+            throw new ConflictException("Пользователь с таким email уже существует");
         }
 
         return UserMapper.toUserDto(createdUser);
