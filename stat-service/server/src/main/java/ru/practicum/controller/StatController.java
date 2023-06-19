@@ -5,8 +5,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.StatisticRequestDto;
-import ru.practicum.StatisticResponseDto;
+import ru.practicum.statistic.dto.StatisticRequestDto;
+import ru.practicum.statistic.dto.StatisticResponseDto;
 import ru.practicum.exception.BadRequestException;
 import ru.practicum.service.StatService;
 

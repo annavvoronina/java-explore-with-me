@@ -1,7 +1,7 @@
 package ru.practicum.service;
 
-import ru.practicum.StatisticRequestDto;
-import ru.practicum.StatisticResponseDto;
+import ru.practicum.statistic.dto.StatisticRequestDto;
+import ru.practicum.statistic.dto.StatisticResponseDto;
 
 import java.time.LocalDateTime;
 import java.util.List;

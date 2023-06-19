@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.DefaultUriBuilderFactory;
-import ru.practicum.StatisticRequestDto;
+import ru.practicum.statistic.dto.StatisticRequestDto;
 
 import java.util.Map;
 

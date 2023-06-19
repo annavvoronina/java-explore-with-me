@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.StatisticRequestDto;
+import ru.practicum.statistic.dto.StatisticRequestDto;
 import ru.practicum.category.repository.CategoryRepository;
 import ru.practicum.client.StatisticClient;
 import ru.practicum.events.dto.*;
@@ -77,7 +77,7 @@ public class EventServiceImpl implements EventService {
             throw new BadRequestException("Не корректная дата " + eventDto.getEventDate());
         }
         var eventPresent = eventRepository.findById(eventId);
-        if (!eventPresent.isPresent()) {
+        if (eventPresent.isEmpty()) {
             throw new ObjectNotFoundException("Событие не найдено " + eventId);
         }
 
@@ -170,7 +170,7 @@ public class EventServiceImpl implements EventService {
         }
 
         var eventOptional = eventRepository.findById(eventId);
-        if (!eventOptional.isPresent()) {
+        if (eventOptional.isEmpty()) {
             throw new ObjectNotFoundException(String.format("Событие не найдено " + eventId));
         }
         var event = eventOptional.get();
@@ -209,7 +209,7 @@ public class EventServiceImpl implements EventService {
         client.createStat(statRequestDto);
         List<Event> events = eventRepository.findAll(getRequestParamForDb(userSearch), pageable).getContent();
         List<EventShortDto> eventShort = events.stream()
-                .map(event -> EventMapper.toEventShortDto(event))
+                .map(EventMapper::toEventShortDto)
                 .collect(Collectors.toList());
         if (userSearch.getSort() != null) {
             switch (userSearch.getSort()) {
