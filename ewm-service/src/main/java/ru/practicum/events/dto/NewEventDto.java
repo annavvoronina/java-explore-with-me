@@ -35,7 +35,7 @@ public class NewEventDto {
     private boolean paid;
     @NotNull
     @PositiveOrZero
-    private Long participantLimit;
+    private Long participantLimit = 0L;
     private boolean requestModeration = true;
     @Size(min = 3, message = "минимальная длина 3 символов")
     @Size(max = 120, message = "максимальная длина 120 символов")

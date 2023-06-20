@@ -1,6 +1,7 @@
 package ru.practicum.category.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -26,13 +27,14 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     @Override
     public CategoryDto createCategory(NewCategoryDto newCategoryDto) {
-        Boolean categoryExists = categoryRepository.existsByName(newCategoryDto.getName());
+        Category category;
 
-        if (categoryExists) {
+        try {
+            category = categoryRepository.save(CategoryMapper.toCategory(newCategoryDto));
+        } catch (DataIntegrityViolationException exception) {
             throw new ConflictException("Категория с таким именем уже существует");
         }
 
-        Category category = categoryRepository.save(CategoryMapper.toCategory(newCategoryDto));
         return CategoryMapper.toCategoryDto(category);
     }
 
@@ -42,7 +44,12 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Категория не найдена " + id));
 
-        CategoryMapper.toCategory(category, categoryDto);
+        try {
+            CategoryMapper.toCategory(category, categoryDto);
+        } catch (DataIntegrityViolationException exception) {
+            throw new ConflictException("Категория с таким именем уже существует");
+        }
+
         return CategoryMapper.toCategoryDto(category);
     }
 
