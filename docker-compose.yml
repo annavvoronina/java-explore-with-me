@@ -1,5 +1,19 @@
 version: '3.8'
 services:
+  ewm-service:
+    build: ewm-service
+    ports:
+      - "8080:8080"
+    depends_on:
+      - ewm-db
+      - stats-server
+    environment:
+      - STAT_SERVER_URL=http://stats-server:9090
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewm
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - APP_NAME=ExploreWithMe
+
   stats-server:
     build: stat-service/server
     ports:
@@ -10,19 +24,6 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/stats
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
-
-  ewm-service:
-    build: ewm-service
-    ports:
-      - "8080:8080"
-    depends_on:
-      - ewm-db
-    environment:
-      - STAT_SERVER_URL=http://stats-server:9090
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewm
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=root
-      - APP_NAME=ExploreWithMe
 
   stats-db:
     image: postgres:14-alpine
