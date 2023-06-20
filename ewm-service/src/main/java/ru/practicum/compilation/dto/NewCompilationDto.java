@@ -13,7 +13,7 @@ import java.util.List;
 public class NewCompilationDto {
     private Long id;
     private List<Long> events;
-    private boolean pinned;
+    private boolean pinned = false;
     @Size(min = 20, message = "минимальная длина 20 символов")
     @Size(max = 50, message = "максимальная длина 50 символов")
     private String title;
