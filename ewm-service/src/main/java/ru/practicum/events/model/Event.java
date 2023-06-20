@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Formula;
 import ru.practicum.category.model.Category;
 import ru.practicum.users.model.User;
 
@@ -25,6 +26,7 @@ public class Event {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
+    @Formula("(SELECT COUNT(r.id) FROM Request r WHERE r.event_id = id)")
     private Long confirmedRequests;
     @Column(name = "created_on")
     private LocalDateTime createdOn;

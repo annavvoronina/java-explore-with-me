@@ -18,7 +18,6 @@ CREATE TABLE IF NOT EXISTS events
     id                  BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     annotation          TEXT NOT NULL,
     category_id         BIGINT REFERENCES category (id) ON DELETE CASCADE NOT NULL,
-    confirmed_requests  BIGINT,
     created_on          TIMESTAMP WITHOUT TIME ZONE,
     description         TEXT,
     event_date          TIMESTAMP WITHOUT TIME ZONE NOT NULL,

@@ -60,7 +60,6 @@ public class RequestServiceImpl implements RequestService {
 
         if (event.getParticipantLimit() == 0) {
             eventRequest.setStatus(RequestStatus.CONFIRMED);
-            event.setConfirmedRequests(event.getConfirmedRequests() != null ? event.getConfirmedRequests() + 1 : 1);
         } else {
             eventRequest.setStatus(RequestStatus.PENDING);
         }
@@ -139,7 +138,6 @@ public class RequestServiceImpl implements RequestService {
         requestRepository.saveAll(eventRequestList);
 
         if (eventRequestStatusUpdateRequest.getStatus() == RequestStatus.CONFIRMED) {
-            event.setConfirmedRequests(event.getConfirmedRequests() != null ? event.getConfirmedRequests() + 1 : 1);
             eventRepository.save(event);
         }
 
