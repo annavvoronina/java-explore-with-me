@@ -18,7 +18,7 @@
 
 	<name>Explore With Me</name>
 	<modules>
-		<module>stat-service</module>
+		<module>stats-server</module>
 		<module>ewm-service</module>
 	</modules>
 

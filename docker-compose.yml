@@ -6,7 +6,6 @@ services:
       - "8080:8080"
     depends_on:
       - ewm-db
-      - stats-server
     environment:
       - STAT_SERVER_URL=http://stats-server:9090
       - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewm
@@ -15,7 +14,7 @@ services:
       - APP_NAME=ExploreWithMe
 
   stats-server:
-    build: stat-service/client
+    build: stats-server
     ports:
       - "9090:9090"
     depends_on:
