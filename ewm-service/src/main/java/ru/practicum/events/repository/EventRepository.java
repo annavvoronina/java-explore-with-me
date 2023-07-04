@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import ru.practicum.events.model.Event;
+import ru.practicum.events.model.State;
 import ru.practicum.users.model.User;
 
 import java.time.LocalDateTime;
@@ -18,6 +19,8 @@ public interface EventRepository extends JpaRepository<Event, Long>, QuerydslPre
     List<Event> findAllByIdIn(List<Long> ids);
 
     Page<Event> findAllByInitiator(User user, Pageable pageable);
+
+    Page<Event> findAllByInitiatorIdAndState(Long userId, State state, Pageable pageable);
 
     Optional<Event> findByInitiatorAndId(User user, Long id);
 
