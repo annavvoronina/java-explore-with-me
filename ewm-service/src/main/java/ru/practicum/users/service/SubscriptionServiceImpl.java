@@ -15,7 +15,7 @@ import ru.practicum.request.model.Request;
 import ru.practicum.request.model.RequestStatus;
 import ru.practicum.request.repository.RequestRepository;
 import ru.practicum.users.dto.SubscriptionDto;
-import ru.practicum.users.mapper.UserMapper;
+import ru.practicum.users.mapper.SubscriptionMapper;
 import ru.practicum.users.model.StatusSubscription;
 import ru.practicum.users.model.Subscription;
 import ru.practicum.users.repository.SubscriptionRepository;
@@ -42,16 +42,16 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         var subscription = subscriptionRepository.findByUserIdAndSubscriberId(userId, subscriberId);
         var subscriptionSubscriber = subscriptionRepository.findByUserIdAndSubscriberId(subscriberId, userId);
         if (subscription == null) {
-            subscription = subscriptionRepository.save(UserMapper.toSubscription(userId, subscriberId, StatusSubscription.PENDING));
-            subscriptionRepository.save(UserMapper.toSubscription(subscriberId, userId, StatusSubscription.REQUEST));
+            subscription = subscriptionRepository.save(SubscriptionMapper.toSubscription(userId, subscriberId, StatusSubscription.PENDING));
+            subscriptionRepository.save(SubscriptionMapper.toSubscription(subscriberId, userId, StatusSubscription.REQUEST));
         } else {
-            if (!subscription.getStatus().equals(StatusSubscription.FOLLOWER) && !subscription.getStatus().equals(StatusSubscription.REQUEST)) {
+            if (subscription.getStatus() != StatusSubscription.FOLLOWER && subscription.getStatus() != StatusSubscription.REQUEST) {
                 throw new ObjectNotFoundException("Уже есть подписка на пользователя или ожидает подтверждения " + subscriberId);
             }
             subscription.setStatus(StatusSubscription.FRIEND);
             subscriptionSubscriber.setStatus(StatusSubscription.FRIEND);
         }
-        return UserMapper.toSubscriptionDto(subscription);
+        return SubscriptionMapper.toSubscriptionDto(subscription);
     }
 
     @Transactional
@@ -65,7 +65,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         }
         subscription.setStatus(StatusSubscription.FOLLOWER);
         subscriptionSubscriber.setStatus(StatusSubscription.FOLLOWING);
-        return UserMapper.toSubscriptionDto(subscription);
+        return SubscriptionMapper.toSubscriptionDto(subscription);
     }
 
     @Transactional
@@ -109,7 +109,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         }
         return subscription
                 .stream()
-                .map(UserMapper::toSubscriptionDto)
+                .map(SubscriptionMapper::toSubscriptionDto)
                 .collect(Collectors.toList());
     }
 

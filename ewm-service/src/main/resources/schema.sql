@@ -1,10 +1,10 @@
-DROP TABLE IF EXISTS users, events, category, request, compilation, compilation_events,subscriptions CASCADE;
+DROP TABLE IF EXISTS users, events, category, request, compilation, compilation_events, subscriptions CASCADE;
 
 CREATE TABLE IF NOT EXISTS users
 (
-    id    BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    name  VARCHAR(255)        NOT NULL
+    id                  BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    email               VARCHAR(255) UNIQUE NOT NULL,
+    name                VARCHAR(255)        NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS category
@@ -43,22 +43,22 @@ CREATE TABLE IF NOT EXISTS request
 
 CREATE TABLE IF NOT EXISTS compilation
 (
-    id     BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    pinned BOOLEAN,
-    title  VARCHAR(50)
+    id                  BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    pinned              BOOLEAN,
+    title               VARCHAR(50)
 );
 
 CREATE TABLE IF NOT EXISTS compilation_events
 (
-    id             BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    compilation_id BIGINT REFERENCES compilation (id) ON DELETE NO ACTION NOT NULL,
-    events_id      BIGINT REFERENCES events (id) ON DELETE NO ACTION      NOT NULL
+    id                  BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    compilation_id      BIGINT REFERENCES compilation (id) ON DELETE NO ACTION NOT NULL,
+    events_id           BIGINT REFERENCES events (id) ON DELETE NO ACTION NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS subscriptions
 (
-    id            BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    user_id       BIGINT,
-    subscriber_id BIGINT,
-    status        VARCHAR(30)
+    id                  BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    user_id             BIGINT,
+    subscriber_id       BIGINT,
+    status              VARCHAR(30)
 );

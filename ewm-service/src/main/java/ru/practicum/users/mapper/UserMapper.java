@@ -33,16 +33,4 @@ public class UserMapper {
     public static List<UserDto> toListDto(List<User> users) {
         return users.stream().map(UserMapper::toUserDto).collect(Collectors.toList());
     }
-
-    public static Subscription toSubscription(Long userId, Long subscriberId, StatusSubscription status) {
-        Subscription subscription = new Subscription();
-        subscription.setUserId(userId);
-        subscription.setSubscriberId(subscriberId);
-        subscription.setStatus(status);
-        return subscription;
-    }
-
-    public static SubscriptionDto toSubscriptionDto(Subscription subscription) {
-        return new SubscriptionDto(subscription.getUserId(), subscription.getSubscriberId(), subscription.getStatus());
-    }
 }

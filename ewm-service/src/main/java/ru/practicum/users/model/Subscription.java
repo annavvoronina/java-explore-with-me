@@ -21,6 +21,7 @@ public class Subscription {
     private Long userId;
     @Column(name = "subscriber_id")
     private Long subscriberId;
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 30)
     private StatusSubscription status;
 }
