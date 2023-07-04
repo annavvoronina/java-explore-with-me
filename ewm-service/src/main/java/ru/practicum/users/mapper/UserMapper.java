@@ -3,11 +3,8 @@ package ru.practicum.users.mapper;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import ru.practicum.users.dto.NewUserRequest;
-import ru.practicum.users.dto.SubscriptionDto;
 import ru.practicum.users.dto.UserDto;
 import ru.practicum.users.dto.UserShortDto;
-import ru.practicum.users.model.StatusSubscription;
-import ru.practicum.users.model.Subscription;
 import ru.practicum.users.model.User;
 
 import java.util.List;
