@@ -26,7 +26,7 @@ public class Event {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
-    @Formula("(SELECT COUNT(r.id) FROM Request r WHERE r.event_id = id AND r.status='CONFIRMED')")
+    @Formula("(SELECT COUNT(r.id) FROM Request r WHERE r.event_id = id)")
     private Long confirmedRequests;
     @Column(name = "created_on")
     private LocalDateTime createdOn;
